@@ -8,7 +8,7 @@ Proyecto final para la materia de Programación Móvil. Aplicación Android nati
 
 | Integrante | Rol / Módulo Asignado | Rama Git (Feature Branch) |
 | :--- | :--- | :--- |
-| ** ** | **Líder & Arquitectura**<br>Gestión de BD (Room), Menú Principal y Módulo de Clientes. | `feature/clientes_dashboard` |
+| ** ** | **Arquitectura**<br>Gestión de BD (Room), Menú Principal y Módulo de Clientes. | `feature/clientes_dashboard` |
 | ** ** | **Seguridad & Acceso**<br>Login, Validación de Roles (Admin/Vendedor) y Sesión. | `feature/seguridad_login` |
 | ** ** | **Inventario & UI**<br>Listado (RecyclerView), Diseño Dinámico (CardView) y Alta de Productos. | `feature/inventario_crud` |
 | ** ** | **Ventas & Lógica POO**<br>Carrito de Compras, Cálculo de Impuestos (Polimorfismo) y Transacciones. | `feature/ventas_polimorfismo` |
