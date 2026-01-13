@@ -1,26 +1,46 @@
 package com.example.proyectofinalpoo.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.Button;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
-
 import com.example.proyectofinalpoo.R;
+import com.example.proyectofinalpoo.util.SessionManager; // Importante importar esto
 
 public class MainActivity extends AppCompatActivity {
+
+    Button btnCerrar;
+    SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Inicializar SessionManager
+        session = new SessionManager(this);
+
+        // Verificar si NO está logueado (Seguridad extra por si alguien entra directo)
+        if (!session.estaLogueado()) {
+            irAlLogin();
+        }
+
+        btnCerrar = findViewById(R.id.btnCerrarSesion);
+
+        btnCerrar.setOnClickListener(v -> {
+            // 1. Borrar datos de sesión
+            session.cerrarSesion();
+
+            // 2. Volver al Login
+            irAlLogin();
         });
+    }
+
+    private void irAlLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        // Esto evita que puedan volver atrás con el botón del celular
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
     }
 }
