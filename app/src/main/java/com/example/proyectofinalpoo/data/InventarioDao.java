@@ -1,0 +1,39 @@
+package com.example.proyectofinalpoo.data;
+
+import androidx.room.Dao;
+import androidx.room.Insert;
+import androidx.room.Query;
+import androidx.room.Transaction;
+import com.example.proyectofinalpoo.model.*;
+import java.util.List;
+
+@Dao
+public interface InventarioDao {
+    // --- USUARIOS (Esto soluciona el error .login en LoginActivity) ---
+    @Query("SELECT * FROM USUARIOS WHERE usu_Alias = :user AND usu_Clave = :pass AND usu_Estado = 'ACT' LIMIT 1")
+    Usuario login(String user, String pass);
+
+    @Insert
+    void insertarUsuario(Usuario usuario);
+
+    // --- PRODUCTOS ---
+    @Insert
+    void insertarProducto(Producto producto);
+
+    @Query("SELECT * FROM PRODUCTOS")
+    List<Producto> obtenerTodosProductos();
+
+    @Query("UPDATE PRODUCTOS SET pro_Stock = pro_Stock - :cantidad WHERE id_Producto = :id")
+    void actualizarStock(int id, int cantidad);
+
+    // --- CATEGORIAS ---
+    @Insert
+    void insertarCategoria(Categoria categoria);
+
+    @Query("SELECT * FROM CATEGORIA")
+    List<Categoria> obtenerCategorias();
+
+    // --- CLIENTES ---
+    @Insert
+    void insertarCliente(Cliente cliente);
+}
