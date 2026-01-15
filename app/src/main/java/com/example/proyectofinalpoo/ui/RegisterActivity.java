@@ -52,20 +52,29 @@ public class RegisterActivity extends AppCompatActivity {
         nuevoUsuario.alias = alias;
         nuevoUsuario.correo = correo;
         nuevoUsuario.clave = clave;
-        nuevoUsuario.estado = "ACT"; // Activo por defecto
-
-        // Si el Checkbox está marcado es 1 (Admin), si no es 0 (Cliente)
+        nuevoUsuario.estado = "ACT";
         nuevoUsuario.esAdministrador = cbEsAdmin.isChecked() ? 1 : 0;
 
-        // Guardar en Base de Datos
         AppDatabase db = AppDatabase.getDatabase(this);
 
-        try {
-            db.inventarioDao().insertarUsuario(nuevoUsuario);
-            Toast.makeText(this, "¡Usuario creado! Ahora puedes ingresar.", Toast.LENGTH_LONG).show();
-            finish(); // Cierra esta pantalla y vuelve al Login
-        } catch (Exception e) {
-            Toast.makeText(this, "Error: El usuario ya existe o falló la base de datos.", Toast.LENGTH_LONG).show();
-        }
+        // 🔴 CAMBIO IMPORTANTE: Usamos el Executor para ir al segundo plano
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            try {
+                // 1. Esto ocurre en "segundo plano" (No congela la pantalla)
+                db.inventarioDao().insertarUsuario(nuevoUsuario);
+
+                // 2. Para mostrar mensajes o cambiar de pantalla, debemos VOLVER al hilo principal
+                runOnUiThread(() -> {
+                    Toast.makeText(RegisterActivity.this, "¡Usuario creado! Ingresa ahora.", Toast.LENGTH_LONG).show();
+                    finish(); // Cierra el registro
+                });
+
+            } catch (Exception e) {
+                // Si falla, también volvemos al hilo principal para mostrar el error
+                runOnUiThread(() -> {
+                    Toast.makeText(RegisterActivity.this, "Error: El usuario ya existe.", Toast.LENGTH_SHORT).show();
+                });
+            }
+        });
     }
 }
