@@ -36,12 +36,7 @@
         android:inputType="textPassword"
         android:layout_marginTop="10dp"/>
 
-    <CheckBox
-        android:id="@+id/cbEsAdmin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="¿Registrar como Administrador?"
-        android:layout_marginTop="15dp"/>
+
 
     <Button
         android:id="@+id/btnRegistrarUsuario"

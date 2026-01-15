@@ -21,18 +21,18 @@ public class RegisterActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // 1. Vincular vistas
+        // Para las vistas , es la vinculacion
         etUsuario = findViewById(R.id.etRegUsuario);
         etCorreo = findViewById(R.id.etRegCorreo);
         etClave = findViewById(R.id.etRegClave);
-        cbEsAdmin = findViewById(R.id.cbEsAdmin);
+
         btnGuardar = findViewById(R.id.btnRegistrarUsuario);
         btnCancelar = findViewById(R.id.btnCancelar);
 
-        // 2. Acción del botón Guardar
+        // en la accion del boton guardar
         btnGuardar.setOnClickListener(v -> registrarUsuario());
 
-        // 3. Acción del botón Cancelar
+        //en la accion del boton cancelar
         btnCancelar.setOnClickListener(v -> finish());
     }
 
@@ -41,11 +41,11 @@ public class RegisterActivity extends AppCompatActivity {
         String correo = etCorreo.getText().toString().trim();
         String clave = etClave.getText().toString().trim();
 
-        // Validaciones básicas
+        //Estas son la validaciones
         if (alias.isEmpty() || correo.isEmpty() || clave.isEmpty()) {
             Toast.makeText(this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
             return;
-        }
+        } // Solo es una validacion basica que comprueba si esta lleno los campos
 
         // Crear objeto Usuario
         Usuario nuevoUsuario = new Usuario();
@@ -53,17 +53,17 @@ public class RegisterActivity extends AppCompatActivity {
         nuevoUsuario.correo = correo;
         nuevoUsuario.clave = clave;
         nuevoUsuario.estado = "ACT";
-        nuevoUsuario.esAdministrador = cbEsAdmin.isChecked() ? 1 : 0;
+        nuevoUsuario.esAdministrador = 1;
 
         AppDatabase db = AppDatabase.getDatabase(this);
 
-        // 🔴 CAMBIO IMPORTANTE: Usamos el Executor para ir al segundo plano
+        //Usamos el Executor para ir al segundo plano
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
-                // 1. Esto ocurre en "segundo plano" (No congela la pantalla)
+                // Esto ocurre en "segundo plano" , nos quita el error No congela la pantalla
                 db.inventarioDao().insertarUsuario(nuevoUsuario);
 
-                // 2. Para mostrar mensajes o cambiar de pantalla, debemos VOLVER al hilo principal
+                // para mostrar mensajes o cambiar de pantalla, debemos VOLVER al hilo principal
                 runOnUiThread(() -> {
                     Toast.makeText(RegisterActivity.this, "¡Usuario creado! Ingresa ahora.", Toast.LENGTH_LONG).show();
                     finish(); // Cierra el registro
