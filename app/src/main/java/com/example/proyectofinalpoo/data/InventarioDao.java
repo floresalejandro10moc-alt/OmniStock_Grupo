@@ -36,4 +36,8 @@ public interface InventarioDao {
     // --- CLIENTES ---
     @Insert
     void insertarCliente(Cliente cliente);
+
+    // MeTODO PARA CAMBIAR IVA ESPECÍFICO
+    @Query("UPDATE CATEGORIA SET cat_IVA = :nuevoIVA WHERE cat_Nombre = :nombreCategoria")
+    void actualizarIVACategoria(String nombreCategoria, double nuevoIVA);
 }
