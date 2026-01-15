@@ -19,29 +19,27 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
-    // Executor para realizar operaciones en segundo plano (Standard en Room)
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    // 2. EL CALLBACK MÁGICO (Esto llena los datos)
+    // 2. EL CALLBACK MÁGICO
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 
-            // Usamos un hilo secundario para no congelar la app al instalar
             databaseWriteExecutor.execute(() -> {
-                // Inyectar USUARIOS
-                // Admin (Clave: admin123)
+                // --- USUARIOS (ESTO ESTABA BIEN) ---
+                // Usaste usu_Alias, usu_Clave, etc. Esto coincide con tu modelo Usuario. ¡Bien!
                 db.execSQL("INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('AdminAlejo', 'admin123', 'admin@omnistock.com', 1, 'ACT')");
-
-                // Vendedor (Clave: vend123)
                 db.execSQL("INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('VendedorJuan', 'vend123', 'juan@omnistock.com', 0, 'ACT')");
 
-                // Inyectar CATEGORIAS (Necesarias para crear productos después)
-                db.execSQL("INSERT INTO CATEGORIA (nombre, iva, impuesto_adicional) VALUES ('Electronica', 15.0, 5.0)");
-                db.execSQL("INSERT INTO CATEGORIA (nombre, iva, impuesto_adicional) VALUES ('Ropa', 12.0, 0.0)");
-                db.execSQL("INSERT INTO CATEGORIA (nombre, iva, impuesto_adicional) VALUES ('Alimentos', 0.0, 0.0)");
+                // --- CATEGORIAS (AQUÍ ESTÁ LA CORRECCIÓN) ---
+                // Antes decia: (nombre, iva, impuesto_adicional) -> ERROR
+                // Ahora dice:  (cat_Nombre, cat_IVA, cat_Impuesto) -> CORRECTO
+                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)"); // 5% suntuario
+                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Ropa', 12.0, 0.0)");
+                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Alimentos', 0.0, 0.0)");
             });
         }
     };
@@ -52,8 +50,8 @@ public abstract class AppDatabase extends RoomDatabase {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "omnistock_db")
-                            .addCallback(sRoomDatabaseCallback) // <--- Aquí conectamos el Callback
-                            .allowMainThreadQueries() // Permite consultas simples en el Login
+                            .addCallback(sRoomDatabaseCallback)
+                            .allowMainThreadQueries()
                             .build();
                 }
             }
