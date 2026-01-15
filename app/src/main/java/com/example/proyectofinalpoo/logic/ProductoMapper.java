@@ -5,7 +5,7 @@ import com.example.proyectofinalpoo.model.Producto;
 
 public class ProductoMapper {
 
-    // Metodo estatico: No necesitas crear una instancia de Mapper para usarlo
+    // Método estatico: No necesitas crear una instancia de Mapper para usarlo
     public static ProductoBase convertirEntidadALogica(Producto entidadProducto, Categoria entidadCategoria) {
 
         // 1. Validaciones de seguridad (por si la BD devuelve nulos)
