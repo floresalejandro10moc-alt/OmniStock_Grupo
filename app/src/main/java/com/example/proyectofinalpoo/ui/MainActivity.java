@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.util.SessionManager; // Importante importar esto
 
-public class MainActivity extends AppCompatActivity {
+public class    MainActivity extends AppCompatActivity {
 
     Button btnCerrar;
     SessionManager session;
@@ -34,6 +34,21 @@ public class MainActivity extends AppCompatActivity {
             // 2. Volver al Login
             irAlLogin();
         });
+
+        /*
+        // "Script para actualizar el IVA"
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase.getDatabase(context).inventarioDao().actualizarIVACategoria("Electronica", 8.0);
+        });
+        */
+
+
+        /*// "Script para actualizar el impuesto"
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase.getDatabase(this).inventarioDao()
+                .actualizarImpuestoCategoria("Electronica", 0.10); // Ojo: 0.10 si usas decimales, o 10.0 si usas porcentajes
+        });
+        * */
     }
 
     private void irAlLogin() {

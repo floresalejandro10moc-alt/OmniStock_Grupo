@@ -40,4 +40,8 @@ public interface InventarioDao {
     // MeTODO PARA CAMBIAR IVA ESPECÍFICO
     @Query("UPDATE CATEGORIA SET cat_IVA = :nuevoIVA WHERE cat_Nombre = :nombreCategoria")
     void actualizarIVACategoria(String nombreCategoria, double nuevoIVA);
+
+    // MeTODO PARA ACTUALIZAR IMPUESTO SUNTUARIO (cat_Impuesto)
+    @Query("UPDATE CATEGORIA SET cat_Impuesto = :nuevoImpuesto WHERE cat_Nombre = :nombreCategoria")
+    void actualizarImpuestoCategoria(String nombreCategoria, double nuevoImpuesto);
 }
