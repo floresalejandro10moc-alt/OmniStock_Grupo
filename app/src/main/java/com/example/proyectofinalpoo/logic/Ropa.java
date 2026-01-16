@@ -3,8 +3,8 @@ package com.example.proyectofinalpoo.logic;
 public class Ropa extends ProductoBase {
     private boolean esTemporadaAnterior;
 
-    public Ropa(String nombre, double precioBase, int stock, double ivaBD, boolean esTemporadaAnterior) {
-        super(nombre, precioBase, stock, ivaBD);
+    public Ropa(int id,String nombre, double precioBase, int stock, double ivaBD, boolean esTemporadaAnterior) {
+        super(id,nombre, precioBase, stock, ivaBD);
         this.esTemporadaAnterior = esTemporadaAnterior;
     }
 

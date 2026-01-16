@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // 1. Aquí definimos las tablas de la base de datos
-@Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class}, version = 1, exportSchema = false)
+@Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class, DetalleFactura.class}, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract InventarioDao inventarioDao();
@@ -40,6 +40,18 @@ public abstract class AppDatabase extends RoomDatabase {
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)"); // 5% suntuario
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Ropa', 12.0, 0.0)");
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Alimentos', 0.0, 0.0)");
+
+                // --- 3. PRODUCTOS (¡ESTO FALTABA!) ---
+                // OJO: Insertamos manualmente los IDs (1, 2, 3) para que coincidan con PruebaLogica
+
+                // Producto 1: PlayStation (id_Categoria = 1 Electronica)
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (1, 1, 'PlayStation 5 (Test)', 100.0, 10, 0, 'ACT')");
+
+                // Producto 2: Camisa Vieja (id_Categoria = 2 Ropa)
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (2, 2, 'Camisa Vieja (Test)', 100.0, 5, 1, 'ACT')");
+
+                // Producto 3: Manzanas (id_Categoria = 3 Alimentos)
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (3, 3, 'Manzanas (Test)', 50.0, 100, 0, 'ACT')");
             });
         }
     };
@@ -51,6 +63,7 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "omnistock_db")
                             .addCallback(sRoomDatabaseCallback)
+                            .fallbackToDestructiveMigration()
                             .allowMainThreadQueries()
                             .build();
                 }

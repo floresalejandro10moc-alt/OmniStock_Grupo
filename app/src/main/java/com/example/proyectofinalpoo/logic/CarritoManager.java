@@ -40,4 +40,13 @@ public class CarritoManager {
     public void vaciarCarrito() {
         carrito.clear();
     }
+
+    // Nuevo metodo: Suma solo los precios BASE (antes de impuestos)
+    public double calcularSubtotalBase() {
+        double subtotal = 0;
+        for (ProductoBase p : carrito) {
+            subtotal += p.getPrecioBase();
+        }
+        return subtotal;
+    }
 }
