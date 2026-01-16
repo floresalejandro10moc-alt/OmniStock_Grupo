@@ -1,5 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="bg_main">#080E1E</color>
+    <color name="accent_primary">#FFFFFF</color>
+
+    <color name="glass_white_10">#1AFFFFFF</color>
+    <color name="glass_stroke">#4DFFFFFF</color>
+
+    <color name="text_high_emphasis">#FFFFFF</color>
+    <color name="text_medium_emphasis">#B3FFFFFF</color>
 </resources>
