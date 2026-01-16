@@ -9,7 +9,7 @@ import com.example.proyectofinalpoo.util.SessionManager; // Importante importar 
 
 public class    MainActivity extends AppCompatActivity {
 
-    Button btnCerrar;
+    Button btnCerrar,btnCarrito;;
     SessionManager session;
 
     @Override
@@ -26,13 +26,19 @@ public class    MainActivity extends AppCompatActivity {
         }
 
         btnCerrar = findViewById(R.id.btnCerrarSesion);
-
+        btnCarrito = findViewById(R.id.btnIrAlCarrito);
         btnCerrar.setOnClickListener(v -> {
             // 1. Borrar datos de sesión
             session.cerrarSesion();
 
             // 2. Volver al Login
             irAlLogin();
+        });
+
+        // 3. Acción para IR AL CARRITO (Aquí está la conexión que buscabas)
+        btnCarrito.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CarritoActivity.class);
+            startActivity(intent);
         });
 
         /*
