@@ -44,4 +44,10 @@ public interface InventarioDao {
     // MeTODO PARA ACTUALIZAR IMPUESTO SUNTUARIO (cat_Impuesto)
     @Query("UPDATE CATEGORIA SET cat_Impuesto = :nuevoImpuesto WHERE cat_Nombre = :nombreCategoria")
     void actualizarImpuestoCategoria(String nombreCategoria, double nuevoImpuesto);
+
+    @Insert
+    long insertarFactura(Factura factura); // Devuelve el ID de la factura creada
+
+    @Insert
+    void insertarDetalle(DetalleFactura detalle);
 }

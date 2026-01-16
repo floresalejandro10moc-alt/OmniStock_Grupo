@@ -2,12 +2,14 @@ package com.example.proyectofinalpoo.logic;
 
 // Clase Abstracta: Define el comportamiento, no guarda datos en BD
 public abstract class ProductoBase {
+    protected int id; // <--- AGREGA ESTO
     protected String nombre;
     protected double precioBase;
     protected int stock;
     protected double ivaActual; // El valor del IVA se lo pasaremos desde fuera
 
-    public ProductoBase(String nombre, double precioBase, int stock, double ivaActual) {
+    public ProductoBase(int id,String nombre, double precioBase, int stock, double ivaActual) {
+        this.id = id;
         this.nombre = nombre;
         this.precioBase = precioBase;
         this.stock = stock;
@@ -19,4 +21,6 @@ public abstract class ProductoBase {
 
     public String getNombre() { return nombre; }
     public double getPrecioBase() { return precioBase; }
+
+    public int getId() { return id; }
 }
