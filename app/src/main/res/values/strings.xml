@@ -1,3 +1,8 @@
 <resources>
-    <string name="app_name">ProyectoFinalPOO</string>
+    <string name="login_title">OmniStock Login</string>
+    <string name="app_name">OmniStock</string>
+    <string name="hint_username">Usuario / Alias</string>
+    <string name="hint_password">Contraseña</string>
+    <string name="btn_login_text">INGRESAR</string>
+    <string name="signup_prompt">¿No tienes cuenta? Regístrate aquí</string>
 </resources>
