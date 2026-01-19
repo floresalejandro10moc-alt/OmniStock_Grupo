@@ -27,6 +27,9 @@
         <activity
             android:name=".ui.MainActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.CarritoActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
