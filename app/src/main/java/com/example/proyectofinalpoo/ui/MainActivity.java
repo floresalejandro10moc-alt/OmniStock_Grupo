@@ -72,12 +72,8 @@ public class MainActivity extends AppCompatActivity {
 
         // D) Botón Catálogo (Inventario)
         btnCatalogo.setOnClickListener(v -> {
-            // Cuando crees CatalogoActivity, descomenta la línea de abajo:
-            // Intent intent = new Intent(MainActivity.this, CatalogoActivity.class);
-            // startActivity(intent);
-
-            // Por ahora mostramos un mensaje temporal
-            Toast.makeText(this, "Próximamente: Catálogo de Productos", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, CatalogoActivity.class);
+            startActivity(intent);
         });
 
         // E) Botón Nuevo Producto (Solo Admin)

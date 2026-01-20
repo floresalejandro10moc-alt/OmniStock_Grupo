@@ -11,7 +11,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 // 1. Aquí definimos las tablas de la base de datos
-@Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class, DetalleFactura.class}, version = 2, exportSchema = false)
+@Database(entities = { Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class,
+        DetalleFactura.class }, version = 2, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract InventarioDao inventarioDao();
@@ -19,8 +20,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
-    public static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     // 2. EL CALLBACK MÁGICO
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
@@ -31,27 +31,44 @@ public abstract class AppDatabase extends RoomDatabase {
             databaseWriteExecutor.execute(() -> {
                 // --- USUARIOS (ESTO ESTABA BIEN) ---
                 // Usaste usu_Alias, usu_Clave, etc. Esto coincide con tu modelo Usuario. ¡Bien!
-                db.execSQL("INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('AdminAlejo', 'admin123', 'admin@omnistock.com', 1, 'ACT')");
-                db.execSQL("INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('VendedorJuan', 'vend123', 'juan@omnistock.com', 0, 'ACT')");
+                db.execSQL(
+                        "INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('AdminAlejo', 'admin123', 'admin@omnistock.com', 1, 'ACT')");
+                db.execSQL(
+                        "INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('VendedorJuan', 'vend123', 'juan@omnistock.com', 0, 'ACT')");
 
                 // --- CATEGORIAS (AQUÍ ESTÁ LA CORRECCIÓN) ---
                 // Antes decia: (nombre, iva, impuesto_adicional) -> ERROR
-                // Ahora dice:  (cat_Nombre, cat_IVA, cat_Impuesto) -> CORRECTO
-                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)"); // 5% suntuario
+                // Ahora dice: (cat_Nombre, cat_IVA, cat_Impuesto) -> CORRECTO
+                db.execSQL(
+                        "INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)"); // 5%
+                                                                                                                        // suntuario
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Ropa', 12.0, 0.0)");
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Alimentos', 0.0, 0.0)");
 
                 // --- 3. PRODUCTOS (¡ESTO FALTABA!) ---
-                // OJO: Insertamos manualmente los IDs (1, 2, 3) para que coincidan con PruebaLogica
+                // OJO: Insertamos manualmente los IDs (1, 2, 3) para que coincidan con
+                // PruebaLogica
 
                 // Producto 1: PlayStation (id_Categoria = 1 Electronica)
-                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (1, 1, 'PlayStation 5 (Test)', 100.0, 10, 0, 'ACT')");
+                db.execSQL(
+                        "INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (1, 1, 'PlayStation 5 (Test)', 100.0, 10, 0, 'ACT')");
 
                 // Producto 2: Camisa Vieja (id_Categoria = 2 Ropa)
-                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (2, 2, 'Camisa Vieja (Test)', 100.0, 5, 1, 'ACT')");
+                db.execSQL(
+                        "INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (2, 2, 'Camisa Vieja (Test)', 100.0, 5, 1, 'ACT')");
 
                 // Producto 3: Manzanas (id_Categoria = 3 Alimentos)
-                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (3, 3, 'Manzanas (Test)', 50.0, 100, 0, 'ACT')");
+                db.execSQL(
+                        "INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (3, 3, 'Manzanas (Test)', 50.0, 100, 0, 'ACT')");
+
+                // --- 4. CLIENTES PARA USUARIOS DEFAULT ---
+                // AdminAlejo (ID 1)
+                db.execSQL(
+                        "INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular) VALUES (1, 'Alejandro', 'Flores', '1712345678', 'Quito Centro', '0998877665')");
+                // VendedorJuan (ID 2)
+                db.execSQL(
+                        "INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular) VALUES (2, 'Juan', 'Perez', '1787654321', 'Guayaquil Norte', '0988112233')");
+
             });
         }
     };
@@ -61,7 +78,7 @@ public abstract class AppDatabase extends RoomDatabase {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "omnistock_db")
+                            AppDatabase.class, "omnistock_db")
                             .addCallback(sRoomDatabaseCallback)
                             .fallbackToDestructiveMigration()
                             .allowMainThreadQueries()
