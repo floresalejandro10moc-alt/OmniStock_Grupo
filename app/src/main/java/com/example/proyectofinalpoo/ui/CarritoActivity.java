@@ -91,9 +91,11 @@ public class CarritoActivity extends AppCompatActivity {
                 String aliasLogueado = session.getAliasLogueado();
                 Cliente clienteData = db.inventarioDao().obtenerClientePorAlias(aliasLogueado);
 
+                Integer idClienteFinal = null; // Por defecto null si es Consumidor Final
                 String nombreFinal, cedulaFinal, dirFinal, telfFinal;
 
                 if (clienteData != null) {
+                    idClienteFinal = clienteData.id_Cliente; // <-- Obtenemos el ID real
                     nombreFinal = clienteData.nombre + " " + clienteData.apellido;
                     cedulaFinal = clienteData.cedula;
                     dirFinal = clienteData.direccion;
@@ -105,18 +107,20 @@ public class CarritoActivity extends AppCompatActivity {
                     telfFinal = "N/A";
                 }
 
-                Factura nuevaFactura = new Factura(fechaHoy, totalVenta, nombreFinal, cedulaFinal, dirFinal, telfFinal);
+                // AHORA PASAMOS EL idClienteFinal AL CONSTRUCTOR
+                Factura nuevaFactura = new Factura(fechaHoy, idClienteFinal, totalVenta, nombreFinal, cedulaFinal, dirFinal, telfFinal);
                 long idFacturaGenerado = db.inventarioDao().insertarFactura(nuevaFactura);
 
                 for (ProductoBase prod : manager.getCarrito()) {
                     DetalleFactura detalle = new DetalleFactura(
                             (int) idFacturaGenerado,
                             prod.getId(),
-                            1, // Asumiendo cantidad 1
+                            1,
                             prod.calcularPrecioFinal(),
                             prod.calcularPrecioFinal()
                     );
                     db.inventarioDao().insertarDetalle(detalle);
+                    // Actualizamos stock restando 1
                     db.inventarioDao().actualizarStock(prod.getId(), 1);
                 }
 

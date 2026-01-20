@@ -56,6 +56,7 @@ public abstract class AppDatabase extends RoomDatabase {
         }
     };
 
+
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
@@ -71,4 +72,5 @@ public abstract class AppDatabase extends RoomDatabase {
         }
         return INSTANCE;
     }
+
 }

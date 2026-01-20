@@ -15,6 +15,11 @@ public interface InventarioDao {
     // --- PRODUCTOS ---
     @Insert
     void insertarProducto(Producto producto);
+    @Insert
+    long insertarFactura(Factura factura);
+
+    @Insert
+    void insertarDetalleFactura(DetalleFactura detalle);
 
     @Query("SELECT * FROM PRODUCTOS")
     List<Producto> obtenerTodosProductos();
@@ -38,8 +43,6 @@ public interface InventarioDao {
     @Query("UPDATE CATEGORIA SET cat_Impuesto = :nuevoImpuesto WHERE cat_Nombre = :nombreCategoria")
     void actualizarImpuestoCategoria(String nombreCategoria, double nuevoImpuesto);
 
-    @Insert
-    long insertarFactura(Factura factura); // Devuelve el ID de la factura creada
 
     @Insert
     void insertarDetalle(DetalleFactura detalle);

@@ -36,4 +36,7 @@ public class DetalleFactura {
         this.precioUnitario = precioUnitario;
         this.subtotal = subtotal;
     }
+    public DetalleFactura() {
+
+    }
 }

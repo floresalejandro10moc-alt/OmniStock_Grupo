@@ -11,6 +11,7 @@ import androidx.room.Index;
                 @Index(value = "usu_Alias", unique = true),
                 @Index(value = "usu_Correo", unique = true)
         })
+
 public class Usuario {
     // CONSTANTES DE ROLES (Para fácil modificación futura)
     public static final int ROL_VENDEDOR = 0;
@@ -43,6 +44,7 @@ public class Usuario {
         this.correo = correo;
         this.estado = "ACT";
     }
+
     public boolean esAdministrador() {
         return this.esAdministrador == ROL_ADMIN;
     }
