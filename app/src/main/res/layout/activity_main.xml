@@ -1,31 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="#F0F2F5"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Bienvenido al Sistema"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
-    <Button
-        android:id="@+id/btnIrAlCarrito"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="🛒 IR AL CARRITO DE COMPRAS"
-        android:padding="15dp"
-        android:textSize="16sp"
-        android:layout_marginBottom="20dp"/>
-    <Button
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#D32F2F"
-        android:text="CERRAR SESIÓN" />
+        android:orientation="vertical"
+        android:padding="24dp"
+        android:gravity="center_horizontal">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tvNombreUsuario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Bienvenido al Sistema"
+            android:textSize="26sp"
+            android:textStyle="bold"
+            android:textColor="#1A237E"
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="40dp"/>
+
+        <Button
+            android:id="@+id/btnIrAlInventario"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="📦 CATÁLOGO DE PRODUCTOS"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#1565C0"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"/>
+
+        <Button
+            android:id="@+id/btnAgregarProducto"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="➕ REGISTRAR NUEVO PRODUCTO"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:backgroundTint="#2E7D32"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"/>
+
+        <Button
+            android:id="@+id/btnIrAlCarrito"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="🛒 MI CARRITO DE COMPRAS"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#FF9800"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"/>
+
+        <Button
+            android:id="@+id/btnHistorial"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="🧾 HISTORIAL DE FACTURAS"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:backgroundTint="#37474F"
+            android:layout_marginBottom="40dp"
+            android:elevation="4dp"/>
+
+        <Button
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CERRAR SESIÓN"
+            android:textStyle="bold"
+            android:padding="15dp"
+            android:backgroundTint="#D32F2F"
+            android:elevation="2dp"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -30,6 +30,12 @@
         <activity
             android:name=".ui.CarritoActivity"
             android:exported="false" />
+        <activity
+            android:name=".ui.HistorialFacturasActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.DetalleFacturaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>
