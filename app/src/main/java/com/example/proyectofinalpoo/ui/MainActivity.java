@@ -22,7 +22,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        DataGenerator.cargar200Datos(this);
+        // DataGenerator.cargar200Datos(this);
 
         // 1. Inicializar SessionManager
         session = new SessionManager(this);

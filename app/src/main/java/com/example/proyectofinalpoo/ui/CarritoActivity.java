@@ -99,6 +99,10 @@ public class CarritoActivity extends AppCompatActivity {
                     telfFinal = "N/A";
                 }
 
+                if (nombreFinal == null || nombreFinal.trim().isEmpty()) {
+                    nombreFinal = "Consumidor Final (Fallback)";
+                }
+
                 // AHORA PASAMOS EL idClienteFinal AL CONSTRUCTOR
                 Factura nuevaFactura = new Factura(fechaHoy, idClienteFinal, totalVenta, nombreFinal, cedulaFinal,
                         dirFinal, telfFinal);

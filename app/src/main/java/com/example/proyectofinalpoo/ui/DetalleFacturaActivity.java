@@ -63,6 +63,12 @@ public class DetalleFacturaActivity extends AppCompatActivity {
                     }
                     txtCantidad.setText("Cantidad Total: " + totalItems);
 
+                    if (detalles.isEmpty()) {
+                        android.widget.Toast.makeText(DetalleFacturaActivity.this,
+                                "Advertencia: No se encontraron productos para la Factura ID " + factura.id_Factura,
+                                android.widget.Toast.LENGTH_LONG).show();
+                    }
+
                     // Pasar la lista visual al adaptador
                     adapter = new DetalleProductoAdapter(detalles);
                     recyclerProductos.setAdapter(adapter);
