@@ -21,9 +21,11 @@ import java.util.List;
 public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.ProductoViewHolder> {
 
     private List<ProductoBase> listaProductos;
+    private Runnable onCartUpdate;
 
-    public CarritoAdapter(List<ProductoBase> listaProductos) {
+    public CarritoAdapter(List<ProductoBase> listaProductos, Runnable onCartUpdate) {
         this.listaProductos = listaProductos;
+        this.onCartUpdate = onCartUpdate;
     }
 
     @NonNull
@@ -56,6 +58,18 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
             holder.cardView.setCardBackgroundColor(Color.parseColor("#E8F5E9")); // Verdesito
             holder.txtDetalle.setText("0% IVA");
         }
+
+        holder.btnEliminar.setOnClickListener(v -> {
+            // Eliminar del Manager
+            com.example.proyectofinalpoo.logic.CarritoManager.getInstance().eliminarProducto(position);
+            // Notificar cambios al RecyclerView
+            notifyItemRemoved(position);
+            notifyItemRangeChanged(position, listaProductos.size());
+            // Notificar a la actividad para recalcular totales
+            if (onCartUpdate != null) {
+                onCartUpdate.run();
+            }
+        });
     }
 
     @Override
@@ -67,7 +81,7 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
         TextView txtNombre, txtPrecio, txtDetalle;
         CardView cardView;
-        ImageView icono;
+        ImageView btnEliminar;
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -75,7 +89,7 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
             txtPrecio = itemView.findViewById(R.id.txtPrecioProducto);
             txtDetalle = itemView.findViewById(R.id.txtDetalleImpuesto);
             cardView = itemView.findViewById(R.id.cardViewProducto);
-            icono = itemView.findViewById(R.id.imgIcono);
+            btnEliminar = itemView.findViewById(R.id.imgEliminar);
         }
     }
 }

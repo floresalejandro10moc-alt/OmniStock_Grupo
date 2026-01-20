@@ -23,6 +23,13 @@ public class CarritoManager {
         carrito.add(producto);
     }
 
+    // Metodo para eliminar producto del carrito (NUEVO)
+    public void eliminarProducto(int index) {
+        if (index >= 0 && index < carrito.size()) {
+            carrito.remove(index);
+        }
+    }
+
     // Metodo VITAL: Usa el polimorfismo para sumar totales
     public double calcularTotalPagar() {
         double total = 0;

@@ -24,7 +24,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         DataGenerator.cargar200Datos(this);
 
-
         // 1. Inicializar SessionManager
         session = new SessionManager(this);
 
@@ -73,11 +72,11 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        /* D) Botón Catálogo (Inventario)
+        // D) Botón Catálogo (Inventario)
         btnCatalogo.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CatalogoActivity.class);
             startActivity(intent);
-        });*/
+        });
 
         // E) Botón Nuevo Producto (Solo Admin)
         btnNuevoProd.setOnClickListener(v -> {
