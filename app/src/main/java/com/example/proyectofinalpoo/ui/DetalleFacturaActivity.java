@@ -44,33 +44,63 @@ public class DetalleFacturaActivity extends AppCompatActivity {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
             Factura factura = db.inventarioDao().obtenerFacturaPorId(facturaId);
-            List<DetalleVisual> detalles = db.inventarioDao().obtenerDetallesVisuales(facturaId);
 
+            // 1. RECUPERACION MANUAL DEL CLIENTE (Si existe ID)
+            if (factura != null && factura.id_cliente != null) {
+                com.example.proyectofinalpoo.model.Cliente clienteReal = db.inventarioDao()
+                        .obtenerCliente(factura.id_cliente);
+                if (clienteReal != null) {
+                    factura.nombreCliente = clienteReal.nombre + " " + clienteReal.apellido;
+                    factura.cedula = clienteReal.cedula;
+                    factura.direccion = clienteReal.direccion;
+                    // factura.celular = clienteReal.celular; // Si hiciera falta
+                }
+            }
+
+            // 2. RECUPERACION MANUAL DE PRODUCTOS (Evitando JOIN fallido)
+            java.util.List<com.example.proyectofinalpoo.model.DetalleFactura> rawDetalles = db.inventarioDao()
+                    .obtenerDetallesPorFactura(facturaId);
+            java.util.List<DetalleVisual> detallesVisuales = new java.util.ArrayList<>();
+
+            for (com.example.proyectofinalpoo.model.DetalleFactura raw : rawDetalles) {
+                DetalleVisual dv = new DetalleVisual();
+                dv.cantidad = raw.cantidad;
+                dv.precioUnitario = raw.precioUnitario;
+                dv.subtotal = raw.subtotal;
+
+                // Buscar nombre del producto
+                com.example.proyectofinalpoo.model.Producto p = db.inventarioDao().obtenerProducto(raw.id_Producto);
+                if (p != null) {
+                    dv.nombreProducto = p.nombre;
+                } else {
+                    dv.nombreProducto = "Producto ID: " + raw.id_Producto + " (No encontrado)";
+                }
+                detallesVisuales.add(dv);
+            }
+
+            // 3. ACTUALIZAR UI
             runOnUiThread(() -> {
                 if (factura != null) {
-                    // Llenar cabecera completa
                     txtTitulo.setText("Factura #" + factura.id_Factura);
                     txtCliente.setText("Cliente: " + factura.nombreCliente);
-                    txtCedula.setText("C.I.: " + factura.cedula); // Nuevo
-                    txtDireccion.setText("Dir: " + factura.direccion); // Nuevo
+                    txtCedula.setText("C.I.: " + factura.cedula);
+                    txtDireccion.setText("Dir: " + factura.direccion);
                     txtFecha.setText("Fecha: " + factura.fecha);
                     txtTotal.setText(String.format("Total: $%.2f", factura.total));
 
-                    // Calcular cantidad total
                     int totalItems = 0;
-                    for (DetalleVisual dv : detalles) {
+                    for (DetalleVisual dv : detallesVisuales) {
                         totalItems += dv.cantidad;
                     }
                     txtCantidad.setText("Cantidad Total: " + totalItems);
 
-                    if (detalles.isEmpty()) {
+                    if (detallesVisuales.isEmpty()) {
                         android.widget.Toast.makeText(DetalleFacturaActivity.this,
                                 "Advertencia: No se encontraron productos para la Factura ID " + factura.id_Factura,
                                 android.widget.Toast.LENGTH_LONG).show();
                     }
 
-                    // Pasar la lista visual al adaptador
-                    adapter = new DetalleProductoAdapter(detalles);
+                    adapter = new DetalleProductoAdapter(detallesVisuales);
                     recyclerProductos.setAdapter(adapter);
                 }
             });

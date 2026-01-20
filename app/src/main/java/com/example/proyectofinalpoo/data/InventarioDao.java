@@ -98,4 +98,11 @@ public interface InventarioDao {
             "INNER JOIN PRODUCTOS p ON d.id_Producto = p.id_Producto " +
             "WHERE d.id_Factura = :idFactura")
     List<DetalleVisual> obtenerDetallesVisuales(long idFactura);
+
+    // --- MÉTODOS DE REFUERZO PARA DETALLE MANUAL ---
+    @Query("SELECT * FROM CLIENTE WHERE id_Cliente = :id LIMIT 1")
+    Cliente obtenerCliente(int id);
+
+    @Query("SELECT * FROM PRODUCTOS WHERE id_Producto = :id LIMIT 1")
+    Producto obtenerProducto(int id);
 }
