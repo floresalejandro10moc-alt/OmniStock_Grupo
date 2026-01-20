@@ -53,7 +53,7 @@ public class CarritoActivity extends AppCompatActivity {
         // 3. Configurar el RecyclerView
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CarritoAdapter(manager.getCarrito());
+        adapter = new CarritoAdapter(manager.getCarrito(), this::actualizarTotal);
         recyclerView.setAdapter(adapter);
 
         // 4. Mostrar el total
@@ -100,7 +100,8 @@ public class CarritoActivity extends AppCompatActivity {
                 }
 
                 // AHORA PASAMOS EL idClienteFinal AL CONSTRUCTOR
-                Factura nuevaFactura = new Factura(fechaHoy, idClienteFinal, totalVenta, nombreFinal, cedulaFinal, dirFinal, telfFinal);
+                Factura nuevaFactura = new Factura(fechaHoy, idClienteFinal, totalVenta, nombreFinal, cedulaFinal,
+                        dirFinal, telfFinal);
                 long idFacturaGenerado = db.inventarioDao().insertarFactura(nuevaFactura);
 
                 for (ProductoBase prod : manager.getCarrito()) {

@@ -14,7 +14,7 @@ import java.util.List;
 
 public class DetalleFacturaActivity extends AppCompatActivity {
 
-    private TextView txtCedula, txtDireccion,txtTitulo, txtCliente, txtFecha, txtTotal;
+    private TextView txtCedula, txtDireccion, txtTitulo, txtCliente, txtFecha, txtTotal, txtCantidad;
     private RecyclerView recyclerProductos;
     private DetalleProductoAdapter adapter;
 
@@ -27,6 +27,7 @@ public class DetalleFacturaActivity extends AppCompatActivity {
         txtCliente = findViewById(R.id.txtDetalleFacturaCliente);
         txtFecha = findViewById(R.id.txtDetalleFacturaFecha);
         txtTotal = findViewById(R.id.txtDetalleFacturaTotal);
+        txtCantidad = findViewById(R.id.txtDetalleFacturaCantidad);
         txtCedula = findViewById(R.id.txtDetalleFacturaCedula);
         txtDireccion = findViewById(R.id.txtDetalleFacturaDireccion);
         recyclerProductos = findViewById(R.id.recyclerDetalleProductos);
@@ -50,10 +51,17 @@ public class DetalleFacturaActivity extends AppCompatActivity {
                     // Llenar cabecera completa
                     txtTitulo.setText("Factura #" + factura.id_Factura);
                     txtCliente.setText("Cliente: " + factura.nombreCliente);
-                    txtCedula.setText("C.I.: " + factura.cedula);      // Nuevo
+                    txtCedula.setText("C.I.: " + factura.cedula); // Nuevo
                     txtDireccion.setText("Dir: " + factura.direccion); // Nuevo
                     txtFecha.setText("Fecha: " + factura.fecha);
                     txtTotal.setText(String.format("Total: $%.2f", factura.total));
+
+                    // Calcular cantidad total
+                    int totalItems = 0;
+                    for (DetalleVisual dv : detalles) {
+                        totalItems += dv.cantidad;
+                    }
+                    txtCantidad.setText("Cantidad Total: " + totalItems);
 
                     // Pasar la lista visual al adaptador
                     adapter = new DetalleProductoAdapter(detalles);
