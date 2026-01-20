@@ -73,6 +73,9 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
                         CarritoManager.getInstance().agregarProducto(logicProduct);
                         Toast.makeText(itemView.getContext(), p.nombre + " añadido al carrito", Toast.LENGTH_SHORT)
                                 .show();
+                    } else {
+                        Toast.makeText(itemView.getContext(), "Error: Categoría no válida para " + p.nombre,
+                                Toast.LENGTH_SHORT).show();
                     }
                 } else {
                     Toast.makeText(itemView.getContext(), "Sin stock disponible", Toast.LENGTH_SHORT).show();

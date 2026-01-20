@@ -11,10 +11,10 @@ import java.util.List;
 @Dao
 public interface InventarioDao {
 
-
     // --- PRODUCTOS ---
     @Insert
     void insertarProducto(Producto producto);
+
     @Insert
     long insertarFactura(Factura factura);
 
@@ -27,13 +27,15 @@ public interface InventarioDao {
     @Query("UPDATE PRODUCTOS SET pro_Stock = pro_Stock - :cantidad WHERE id_Producto = :id")
     void actualizarStock(int id, int cantidad);
 
+    @Query("UPDATE PRODUCTOS SET pro_Estado = 'INA' WHERE id_Producto = :id")
+    void eliminarProductoLogico(int id);
+
     // --- CATEGORIAS ---
     @Insert
     void insertarCategoria(Categoria categoria);
 
     @Query("SELECT * FROM CATEGORIA")
     List<Categoria> obtenerCategorias();
-
 
     // MeTODO PARA CAMBIAR IVA ESPECÍFICO
     @Query("UPDATE CATEGORIA SET cat_IVA = :nuevoIVA WHERE cat_Nombre = :nombreCategoria")
@@ -42,7 +44,6 @@ public interface InventarioDao {
     // MeTODO PARA ACTUALIZAR IMPUESTO SUNTUARIO (cat_Impuesto)
     @Query("UPDATE CATEGORIA SET cat_Impuesto = :nuevoImpuesto WHERE cat_Nombre = :nombreCategoria")
     void actualizarImpuestoCategoria(String nombreCategoria, double nuevoImpuesto);
-
 
     @Insert
     void insertarDetalle(DetalleFactura detalle);
@@ -91,7 +92,8 @@ public interface InventarioDao {
 
     // 2. OBTENER DETALLES + NOMBRE DEL PRODUCTO (JOIN)
     // Esto soluciona que la lista salga vacía o sin nombres
-    @Query("SELECT p.pro_Nombre as nombreProducto, d.det_Cantidad as cantidad, d.det_PrecioUnitario as precioUnitario, d.det_Subtotal as subtotal " +
+    @Query("SELECT p.pro_Nombre as nombreProducto, d.det_Cantidad as cantidad, d.det_PrecioUnitario as precioUnitario, d.det_Subtotal as subtotal "
+            +
             "FROM DETALLE_FACTURA d " +
             "INNER JOIN PRODUCTOS p ON d.id_Producto = p.id_Producto " +
             "WHERE d.id_Factura = :idFactura")
