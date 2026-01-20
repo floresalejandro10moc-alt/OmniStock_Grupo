@@ -50,16 +50,8 @@ public class CarritoActivity extends AppCompatActivity {
         // 2. Cargar datos del carrito
         CarritoManager manager = CarritoManager.getInstance();
 
-        // --- CÓDIGO RESTAURADO PARA PRUEBAS ---
-        // Limpiamos el carrito por si tenía algo y añadimos productos de prueba.
-        manager.vaciarCarrito();
-        List<ProductoBase> misProductosFalsos = PruebaLogica.getProductosSimulados();
-        for (ProductoBase p : misProductosFalsos) {
-            manager.agregarProducto(p);
-        }
-        // --- FIN DEL CÓDIGO RESTAURADO ---
-
         // 3. Configurar el RecyclerView
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         adapter = new CarritoAdapter(manager.getCarrito());
         recyclerView.setAdapter(adapter);
@@ -117,8 +109,7 @@ public class CarritoActivity extends AppCompatActivity {
                             prod.getId(),
                             1,
                             prod.calcularPrecioFinal(),
-                            prod.calcularPrecioFinal()
-                    );
+                            prod.calcularPrecioFinal());
                     db.inventarioDao().insertarDetalle(detalle);
                     // Actualizamos stock restando 1
                     db.inventarioDao().actualizarStock(prod.getId(), 1);
@@ -133,7 +124,8 @@ public class CarritoActivity extends AppCompatActivity {
                 });
 
             } catch (Exception e) {
-                runOnUiThread(() -> Toast.makeText(this, "Error en transacción: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                runOnUiThread(() -> Toast.makeText(this, "Error en transacción: " + e.getMessage(), Toast.LENGTH_LONG)
+                        .show());
             }
         });
     }
@@ -148,6 +140,7 @@ public class CarritoActivity extends AppCompatActivity {
         txtSubtotal.setText(String.format(Locale.US, "$%.2f", subtotalBase));
         txtImpuestos.setText(String.format(Locale.US, "$%.2f", totalImpuestos));
         txtTotal.setText(String.format(Locale.US, "$%.2f", totalPagar));
-        txtCantidad.setText(String.format(Locale.US, "%d %s", cantidadItems, (cantidadItems == 1) ? "producto" : "productos"));
+        txtCantidad.setText(
+                String.format(Locale.US, "%d %s", cantidadItems, (cantidadItems == 1) ? "producto" : "productos"));
     }
 }
