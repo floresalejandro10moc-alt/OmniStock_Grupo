@@ -76,6 +76,28 @@ public class RegistroProductoActivity extends AppCompatActivity {
 
         // 5. Botón Cancelar
         btnCancelar.setOnClickListener(v -> finish());
+
+        // 6. Listener para Fecha
+        etFechaCaducidad.setOnClickListener(v -> mostrarDatePicker());
+    }
+
+    private void mostrarDatePicker() {
+        final java.util.Calendar c = java.util.Calendar.getInstance();
+        int year = c.get(java.util.Calendar.YEAR);
+        int month = c.get(java.util.Calendar.MONTH);
+        int day = c.get(java.util.Calendar.DAY_OF_MONTH);
+
+        android.app.DatePickerDialog datePickerDialog = new android.app.DatePickerDialog(
+                this,
+                (view, year1, monthOfYear, dayOfMonth) -> {
+                    // Formato dd/MM/yyyy
+                    // Nota: monthOfYear es 0-indexed
+                    String fechaSeleccionada = String.format(java.util.Locale.getDefault(), "%02d/%02d/%04d",
+                            dayOfMonth, monthOfYear + 1, year1);
+                    etFechaCaducidad.setText(fechaSeleccionada);
+                },
+                year, month, day);
+        datePickerDialog.show();
     }
 
     private void cargarCategorias() {
