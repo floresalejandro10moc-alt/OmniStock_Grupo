@@ -35,6 +35,11 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Base de datos inicializada", Toast.LENGTH_SHORT).show();
         }
         // ----------------------------
+        // Dentro del onCreate de MainActivity.java
+        btnNuevoProd.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, AltaProductoActivity.class);
+            startActivity(intent);
+        });
 
         // 1. Inicializar SessionManager
         session = new SessionManager(this);
