@@ -45,18 +45,6 @@ public class MainActivity extends AppCompatActivity {
             return; // Detenemos la ejecución si no hay sesión
         }
 
-        android.content.SharedPreferences prefs = getSharedPreferences("OmniStockPrefs", MODE_PRIVATE);
-        boolean datosCargados = prefs.getBoolean("datos_iniciales_cargados", false);
-
-        if (!datosCargados) {
-            // Solo se ejecuta si es la primera vez
-            DataGenerator.cargar200Datos(this);
-
-            // Guardamos que ya se hizo la carga
-            prefs.edit().putBoolean("datos_iniciales_cargados", true).apply();
-            Toast.makeText(this, "Base de datos inicializada", Toast.LENGTH_SHORT).show();
-        }
-
         // 3. Vincular Vistas con el XML
         tvNombreUser = findViewById(R.id.tvNombreUsuario);
         btnCerrar = findViewById(R.id.btnCerrarSesion);
@@ -104,11 +92,8 @@ public class MainActivity extends AppCompatActivity {
 
         // E) Botón Nuevo Producto (Solo Admin)
         btnNuevoProd.setOnClickListener(v -> {
-            // Cuando crees la pantalla de AltaProductoActivity, descomenta abajo:
-            // Intent intent = new Intent(MainActivity.this, AltaProductoActivity.class);
-            // startActivity(intent);
-
-            Toast.makeText(this, "Próximamente: Crear Producto", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
+            startActivity(intent);
         });
     }
 
