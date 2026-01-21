@@ -22,7 +22,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        // DataGenerator.cargar200Datos(this);
+        // --- LÓGICA DE CARGA ÚNICA ---
+        android.content.SharedPreferences prefs = getSharedPreferences("OmniStockPrefs", MODE_PRIVATE);
+        boolean datosCargados = prefs.getBoolean("datos_iniciales_cargados", false);
+
+        if (!datosCargados) {
+            // Solo se ejecuta si es la primera vez
+            DataGenerator.cargar200Datos(this);
+
+            // Guardamos que ya se hizo la carga
+            prefs.edit().putBoolean("datos_iniciales_cargados", true).apply();
+            Toast.makeText(this, "Base de datos inicializada", Toast.LENGTH_SHORT).show();
+        }
+        // ----------------------------
 
         // 1. Inicializar SessionManager
         session = new SessionManager(this);
