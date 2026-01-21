@@ -75,7 +75,7 @@ public class LoginActivity extends AppCompatActivity {
                         ivBigO.animate()
                                 .scaleX(50f)
                                 .scaleY(50f)
-                                .setDuration(800)
+                                .setDuration(1500)
                                 .withEndAction(() -> irAlMenuPrincipal())
                                 .start();
                     } else {
