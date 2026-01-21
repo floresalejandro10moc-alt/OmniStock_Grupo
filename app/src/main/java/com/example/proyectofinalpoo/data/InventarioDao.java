@@ -99,5 +99,14 @@ public interface InventarioDao {
     // columna)
     @Query("SELECT * FROM FACTURAS WHERE fac_Cedula = :cedula ORDER BY id_Factura DESC")
     List<Factura> obtenerFacturasPorCedula(String cedula);
+    @Insert
+    void insertarCategoria(Categoria categoria);
+
+    @Update
+    void actualizarCategoria(Categoria categoria);
+
+    @Delete
+    void eliminarCategoria(Categoria categoria);
+
 
 }
