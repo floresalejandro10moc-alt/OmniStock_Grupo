@@ -1,54 +1,26 @@
 package com.example.proyectofinalpoo.logic;
 
+import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.model.Categoria;
 import com.example.proyectofinalpoo.model.Producto;
 
 public class ProductoMapper {
-
-    public static ProductoBase convertirEntidadALogica(Producto entidadProducto, Categoria entidadCategoria) {
-
-        if (entidadProducto == null || entidadCategoria == null) {
+    public static ProductoBase convertirEntidadALogica(Producto p, Categoria c) {
+        if (p == null || c == null) {
             return null;
         }
 
-        double ivaDeLaBD = entidadCategoria.iva;
-        double impuestoExtra = entidadCategoria.impuesto;
-        String tipo = (entidadCategoria.nombre != null) ? entidadCategoria.nombre.toUpperCase() : "";
+        String tipo = (c.nombre != null) ? c.nombre.toUpperCase() : "";
 
-        // CASO 1: ELECTRONICOS
-        if (tipo.contains("ELECTRONI") || tipo.contains("ELECTRO")) {
-            return new Electronico(
-                    entidadProducto.id_Producto, // <--- IMPORTANTE: EL ID
-                    entidadProducto.nombre,
-                    entidadProducto.precioBase,
-                    entidadProducto.stock,
-                    ivaDeLaBD,
-                    impuestoExtra
-            );
-        }
-        // CASO 2: ROPA
-        else if (tipo.contains("ROPA") || tipo.contains("VESTIMENTA") || tipo.contains("TEXTIL")) {
-            boolean esViejo = (entidadProducto.esTemporadaAnterior == 1);
-            return new Ropa(
-                    entidadProducto.id_Producto, // <--- IMPORTANTE: EL ID
-                    entidadProducto.nombre,
-                    entidadProducto.precioBase,
-                    entidadProducto.stock,
-                    ivaDeLaBD,
-                    esViejo
-            );
-        }
-        // CASO 3: ALIMENTOS
-        else if (tipo.contains("ALIMENTO") || tipo.contains("COMIDA") || tipo.contains("FRUTA")) {
-            return new Alimento(
-                    entidadProducto.id_Producto, // <--- IMPORTANTE: EL ID
-                    entidadProducto.nombre,
-                    entidadProducto.precioBase,
-                    entidadProducto.stock
-            );
-        }
+        // Si el ID de la imagen no es válido (0 o menor), usamos una imagen por defecto.
+        int imagenResId = (p.imagenResId <= 0) ? R.drawable.ic_default_image : p.imagenResId;
 
-        // CASO 4: DEFECTO
-        return new Electronico(entidadProducto.id_Producto, entidadProducto.nombre, entidadProducto.precioBase, entidadProducto.stock, ivaDeLaBD, 0);
+        if (tipo.contains("ELECTRONI")) {
+            return new Electronico(p.id_Producto, p.nombre, p.precioBase, p.stock, c.iva, c.impuesto, imagenResId);
+        } else if (tipo.contains("ROPA")) {
+            return new Ropa(p.id_Producto, p.nombre, p.precioBase, p.stock, c.iva, p.esTemporadaAnterior == 1, imagenResId);
+        } else {
+            return new Alimento(p.id_Producto, p.nombre, p.precioBase, p.stock, c.iva, imagenResId);
+        }
     }
 }

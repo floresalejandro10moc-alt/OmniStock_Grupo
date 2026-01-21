@@ -10,11 +10,12 @@ import com.example.proyectofinalpoo.model.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// 1. Aquí definimos las tablas de la base de datos
-@Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class, DetalleFactura.class}, version = 2, exportSchema = false)
+@Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class, DetalleFactura.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract InventarioDao inventarioDao();
+    public abstract ProductoDao productoDao();
+    public abstract CategoriaDao categoriaDao();
 
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
@@ -22,36 +23,25 @@ public abstract class AppDatabase extends RoomDatabase {
     public static final ExecutorService databaseWriteExecutor =
             Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    // 2. EL CALLBACK MÁGICO
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 
             databaseWriteExecutor.execute(() -> {
-                // --- USUARIOS (ESTO ESTABA BIEN) ---
-                // Usaste usu_Alias, usu_Clave, etc. Esto coincide con tu modelo Usuario. ¡Bien!
+                // --- INSERCIÓN DE DATOS INICIALES ---
                 db.execSQL("INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('AdminAlejo', 'admin123', 'admin@omnistock.com', 1, 'ACT')");
                 db.execSQL("INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('VendedorJuan', 'vend123', 'juan@omnistock.com', 0, 'ACT')");
 
-                // --- CATEGORIAS (AQUÍ ESTÁ LA CORRECCIÓN) ---
-                // Antes decia: (nombre, iva, impuesto_adicional) -> ERROR
-                // Ahora dice:  (cat_Nombre, cat_IVA, cat_Impuesto) -> CORRECTO
-                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)"); // 5% suntuario
+                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)");
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Ropa', 12.0, 0.0)");
                 db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Alimentos', 0.0, 0.0)");
 
-                // --- 3. PRODUCTOS (¡ESTO FALTABA!) ---
-                // OJO: Insertamos manualmente los IDs (1, 2, 3) para que coincidan con PruebaLogica
-
-                // Producto 1: PlayStation (id_Categoria = 1 Electronica)
-                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (1, 1, 'PlayStation 5 (Test)', 100.0, 10, 0, 'ACT')");
-
-                // Producto 2: Camisa Vieja (id_Categoria = 2 Ropa)
-                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (2, 2, 'Camisa Vieja (Test)', 100.0, 5, 1, 'ACT')");
-
-                // Producto 3: Manzanas (id_Categoria = 3 Alimentos)
-                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (3, 3, 'Manzanas (Test)', 50.0, 100, 0, 'ACT')");
+                // ¡CORRECCIÓN FINAL! Usamos 0 para todas las imágenes.
+                // El ProductoMapper se encargará de asignar una imagen por defecto.
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_ImagenResId, pro_EsTemporadaAnterior) VALUES (1, 1, 'PlayStation 5', 500.0, 15, 0, 0)");
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_ImagenResId, pro_EsTemporadaAnterior) VALUES (2, 2, 'Camisa de Temporada', 25.0, 50, 0, 0)");
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_ImagenResId, pro_EsTemporadaAnterior) VALUES (3, 3, 'Manzanas Frescas', 2.5, 200, 0, 0)");
             });
         }
     };
@@ -63,12 +53,12 @@ public abstract class AppDatabase extends RoomDatabase {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
                                     AppDatabase.class, "omnistock_db")
                             .addCallback(sRoomDatabaseCallback)
-                            .fallbackToDestructiveMigration()
-                            .allowMainThreadQueries()
+                            .fallbackToDestructiveMigration() // La base de datos se recreará por el cambio de versión.
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
+
 }

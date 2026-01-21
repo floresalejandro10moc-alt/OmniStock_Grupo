@@ -3,65 +3,63 @@ package com.example.proyectofinalpoo.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.GridLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyectofinalpoo.R;
-import com.example.proyectofinalpoo.util.SessionManager; // Importante importar esto
+import com.example.proyectofinalpoo.logic.ProductoBase;
+import com.example.proyectofinalpoo.logic.ProductoMapper;
+import com.example.proyectofinalpoo.model.ProductoConCategoria;
+import com.example.proyectofinalpoo.util.ProductoAdapter;
+import com.example.proyectofinalpoo.util.SessionManager;
+import java.util.ArrayList;
+import java.util.List;
 
-public class    MainActivity extends AppCompatActivity {
-
-    Button btnCerrar,btnCarrito;;
-    SessionManager session;
+public class MainActivity extends AppCompatActivity {
+    private SessionManager session;
+    private RecyclerView rvProductos;
+    private ProductoAdapter adapter;
+    private ProductoViewModel productoViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Inicializar SessionManager
         session = new SessionManager(this);
-
-        // Verificar si NO está logueado (Seguridad extra por si alguien entra directo)
         if (!session.estaLogueado()) {
-            irAlLogin();
+            regresarAlLogin();
+            return;
         }
 
-        btnCerrar = findViewById(R.id.btnCerrarSesion);
-        btnCarrito = findViewById(R.id.btnIrAlCarrito);
-        btnCerrar.setOnClickListener(v -> {
-            // 1. Borrar datos de sesión
+        TextView tvBienvenida = findViewById(R.id.tvBienvenidaUsuario);
+        tvBienvenida.setText("Bienvenido, " + session.getAlias());
+
+        rvProductos = findViewById(R.id.rvProductos);
+        rvProductos.setLayoutManager(new GridLayoutManager(this, 2));
+
+        productoViewModel = new ViewModelProvider(this).get(ProductoViewModel.class);
+
+        productoViewModel.getAllProductos().observe(this, productosConCategoria -> {
+            List<ProductoBase> productsLogic = new ArrayList<>();
+            for (ProductoConCategoria pcc : productosConCategoria) {
+                productsLogic.add(ProductoMapper.convertirEntidadALogica(pcc.producto, pcc.categoria));
+            }
+            adapter = new ProductoAdapter(productsLogic, this);
+            rvProductos.setAdapter(adapter);
+        });
+
+        Button btnCerrarSesion = findViewById(R.id.btnCerrarSesion);
+        btnCerrarSesion.setOnClickListener(v -> {
             session.cerrarSesion();
-
-            // 2. Volver al Login
-            irAlLogin();
+            regresarAlLogin();
         });
-
-        // 3. Acción para IR AL CARRITO (Aquí está la conexión que buscabas)
-        btnCarrito.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, CarritoActivity.class);
-            startActivity(intent);
-        });
-
-        /*
-        // "Script para actualizar el IVA"
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            AppDatabase.getDatabase(context).inventarioDao().actualizarIVACategoria("Electronica", 8.0);
-        });
-        */
-
-
-        /*// "Script para actualizar el impuesto"
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            AppDatabase.getDatabase(this).inventarioDao()
-                .actualizarImpuestoCategoria("Electronica", 0.10); // Ojo: 0.10 si usas decimales, o 10.0 si usas porcentajes
-        });
-        * */
     }
 
-    private void irAlLogin() {
-        Intent intent = new Intent(this, LoginActivity.class);
-        // Esto evita que puedan volver atrás con el botón del celular
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
+    private void regresarAlLogin() {
+        startActivity(new Intent(this, LoginActivity.class));
         finish();
     }
 }

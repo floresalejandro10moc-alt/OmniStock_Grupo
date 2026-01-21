@@ -12,13 +12,13 @@ public class PruebaLogica {
         // Esto satisface al nuevo constructor que pide (int id, String nombre...)
 
         // ID: 1
-        lista.add(new Electronico(1, "PlayStation 5 (Test)", 100.00, 10, 0.15, 0.05));
+        lista.add(new Electronico(1, "PlayStation 5 (Test)", 100.00, 10, 0.15, 0.05,0));
 
         // ID: 2
-        lista.add(new Ropa(2, "Camisa Vieja (Test)", 100.00, 5, 0.12, true));
+        lista.add(new Ropa(2, "Camisa Vieja (Test)", 100.00, 5, 0.12, true,0));
 
         // ID: 3
-        lista.add(new Alimento(3, "Manzanas (Test)", 50.00, 100));
+        lista.add(new Alimento(3, "Manzanas (Test)", 50.00, 100,12,0));
 
         return lista;
     }

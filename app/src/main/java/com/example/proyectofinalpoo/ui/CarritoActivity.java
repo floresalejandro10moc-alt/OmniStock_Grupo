@@ -101,7 +101,7 @@ public class CarritoActivity extends AppCompatActivity {
                         db.inventarioDao().insertarDetalle(detalle);
 
                         // C.2 DESCONTAR STOCK (¡Requisito de Rúbrica!)
-                        db.inventarioDao().actualizarStock(prod.getId(), 1);
+                        db.productoDao().actualizarStock(prod.getId(), 1);
                     }
 
                     // D) Limpiar carrito y avisar

@@ -36,7 +36,7 @@ public class SessionManager {
         return pref.getInt(KEY_USER_ROLE, -1);
     }
 
-    public String getAliasUsuario() {
+    public String getAlias() {
         return pref.getString(KEY_USER_ALIAS, "Usuario");
     }
 
@@ -44,4 +44,5 @@ public class SessionManager {
         editor.clear();
         editor.apply();
     }
+
 }

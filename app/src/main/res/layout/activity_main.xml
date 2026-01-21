@@ -1,31 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical"
-    android:padding="24dp">
+    android:background="@drawable/static_background"
+    tools:context=".ui.MainActivity">
 
     <TextView
+        android:id="@+id/tvBienvenidaUsuario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Bienvenido al Sistema"
-        android:textSize="24sp"
+        android:layout_marginTop="32dp"
+        android:layout_marginStart="24dp"
+        android:textColor="@color/text_high_emphasis"
+        android:textSize="28sp"
         android:textStyle="bold"
-        android:layout_marginBottom="32dp"/>
-    <Button
-        android:id="@+id/btnIrAlCarrito"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="🛒 IR AL CARRITO DE COMPRAS"
-        android:padding="15dp"
-        android:textSize="16sp"
-        android:layout_marginBottom="20dp"/>
-    <Button
-        android:id="@+id/btnCerrarSesion"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:backgroundTint="#D32F2F"
-        android:text="CERRAR SESIÓN" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-</LinearLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvProductos"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toTopOf="@+id/layoutButtons"
+        app:layout_constraintTop_toBottomOf="@id/tvBienvenidaUsuario" />
+
+    <LinearLayout
+        android:id="@+id/layoutButtons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/btnIrAlCarrito"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Ver Carrito" />
+
+        <Button
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Cerrar Sesión" />
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
