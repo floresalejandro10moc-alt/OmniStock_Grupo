@@ -59,16 +59,5 @@ public class SessionManager {
     }
 
 
-    // --- MÉTODOS AGREGADOS PARA EL HISTORIAL ---
 
-    // 1. Recuperar el nombre (Usamos tu constante KEY_USER_ALIAS)
-    public String getAliasLogueado() {
-        return pref.getString(KEY_USER_ALIAS, "Cliente");
-    }
-
-    // 2. Verificar si es admin (Usamos tu constante KEY_USER_ROLE)
-    // Comparamos si el rol guardado es igual a 1 (que definimos como Admin)
-    public boolean esAdmin() {
-        return pref.getInt(KEY_USER_ROLE, 0) == 1;
-    }
 }
