@@ -1,20 +1,24 @@
 package com.example.proyectofinalpoo.ui;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.data.AppDatabase;
-import com.example.proyectofinalpoo.model.DetalleVisual;
+import com.example.proyectofinalpoo.model.DetalleParaLogica;
 import com.example.proyectofinalpoo.model.Factura;
 
 import java.util.List;
+import java.util.Locale;
 
 public class DetalleFacturaActivity extends AppCompatActivity {
 
-    private TextView txtCedula, txtDireccion, txtTitulo, txtCliente, txtFecha, txtTotal, txtCantidad;
+    private TextView txtTitulo, txtCliente, txtCedula, txtDireccion, txtTelefono, txtFecha;
+    private TextView txtSubtotal, txtIva15, txtIva12, txtImpSantuario, txtTotal;
     private RecyclerView recyclerProductos;
     private DetalleProductoAdapter adapter;
 
@@ -22,88 +26,105 @@ public class DetalleFacturaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_factura);
-
-        txtTitulo = findViewById(R.id.txtDetalleFacturaTitulo);
-        txtCliente = findViewById(R.id.txtDetalleFacturaCliente);
-        txtFecha = findViewById(R.id.txtDetalleFacturaFecha);
-        txtTotal = findViewById(R.id.txtDetalleFacturaTotal);
-        txtCantidad = findViewById(R.id.txtDetalleFacturaCantidad);
-        txtCedula = findViewById(R.id.txtDetalleFacturaCedula);
-        txtDireccion = findViewById(R.id.txtDetalleFacturaDireccion);
-        recyclerProductos = findViewById(R.id.recyclerDetalleProductos);
-        recyclerProductos.setLayoutManager(new LinearLayoutManager(this));
+        vincularVistas();
 
         long facturaId = getIntent().getLongExtra("FACTURA_ID", -1);
 
-        if (facturaId != -1) {
-            cargarDetalles(facturaId);
+        if (facturaId == -1) {
+            Toast.makeText(this, "Error: No se encontró el ID de la factura.", Toast.LENGTH_LONG).show();
+            finish();
+            return;
         }
+
+        cargarDetalles(facturaId);
+    }
+
+    private void vincularVistas() {
+        txtTitulo = findViewById(R.id.txtDetalleFacturaTitulo);
+        txtCliente = findViewById(R.id.txtDetalleFacturaCliente);
+        txtCedula = findViewById(R.id.txtDetalleFacturaCedula);
+        txtDireccion = findViewById(R.id.txtDetalleFacturaDireccion);
+        txtTelefono = findViewById(R.id.txtDetalleFacturaTelefono);
+        txtFecha = findViewById(R.id.txtDetalleFacturaFecha);
+        txtSubtotal = findViewById(R.id.txtDetalleSubtotal);
+        txtIva15 = findViewById(R.id.txtDetalleIva15);
+        txtIva12 = findViewById(R.id.txtDetalleIva12);
+        txtImpSantuario = findViewById(R.id.txtDetalleImpSantuario);
+        txtTotal = findViewById(R.id.txtDetalleFacturaTotal);
+        recyclerProductos = findViewById(R.id.recyclerDetalleProductos);
+        recyclerProductos.setLayoutManager(new LinearLayoutManager(this));
     }
 
     private void cargarDetalles(long facturaId) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
             Factura factura = db.inventarioDao().obtenerFacturaPorId(facturaId);
+            List<DetalleParaLogica> detallesCompletos = db.inventarioDao().obtenerDetallesCompletosParaLogica(facturaId);
 
-            // 1. RECUPERACION MANUAL DEL CLIENTE (Si existe ID)
-            if (factura != null && factura.id_cliente != null) {
-                com.example.proyectofinalpoo.model.Cliente clienteReal = db.inventarioDao()
-                        .obtenerCliente(factura.id_cliente);
-                if (clienteReal != null) {
-                    factura.nombreCliente = clienteReal.nombre + " " + clienteReal.apellido;
-                    factura.cedula = clienteReal.cedula;
-                    factura.direccion = clienteReal.direccion;
-                    // factura.celular = clienteReal.celular; // Si hiciera falta
-                }
-            }
-
-            // 2. RECUPERACION MANUAL DE PRODUCTOS (Evitando JOIN fallido)
-            java.util.List<com.example.proyectofinalpoo.model.DetalleFactura> rawDetalles = db.inventarioDao()
-                    .obtenerDetallesPorFactura(facturaId);
-            java.util.List<DetalleVisual> detallesVisuales = new java.util.ArrayList<>();
-
-            for (com.example.proyectofinalpoo.model.DetalleFactura raw : rawDetalles) {
-                DetalleVisual dv = new DetalleVisual();
-                dv.cantidad = raw.cantidad;
-                dv.precioUnitario = raw.precioUnitario;
-                dv.subtotal = raw.subtotal;
-
-                // Buscar nombre del producto
-                com.example.proyectofinalpoo.model.Producto p = db.inventarioDao().obtenerProducto(raw.id_Producto);
-                if (p != null) {
-                    dv.nombreProducto = p.nombre;
-                } else {
-                    dv.nombreProducto = "Producto ID: " + raw.id_Producto + " (No encontrado)";
-                }
-                detallesVisuales.add(dv);
-            }
-
-            // 3. ACTUALIZAR UI
             runOnUiThread(() -> {
-                if (factura != null) {
-                    txtTitulo.setText("Factura #" + factura.id_Factura);
-                    txtCliente.setText("Cliente: " + factura.nombreCliente);
-                    txtCedula.setText("C.I.: " + factura.cedula);
-                    txtDireccion.setText("Dir: " + factura.direccion);
-                    txtFecha.setText("Fecha: " + factura.fecha);
-                    txtTotal.setText(String.format("Total: $%.2f", factura.total));
-
-                    int totalItems = 0;
-                    for (DetalleVisual dv : detallesVisuales) {
-                        totalItems += dv.cantidad;
-                    }
-                    txtCantidad.setText("Cantidad Total: " + totalItems);
-
-                    if (detallesVisuales.isEmpty()) {
-                        android.widget.Toast.makeText(DetalleFacturaActivity.this,
-                                "Advertencia: No se encontraron productos para la Factura ID " + factura.id_Factura,
-                                android.widget.Toast.LENGTH_LONG).show();
-                    }
-
-                    adapter = new DetalleProductoAdapter(detallesVisuales);
-                    recyclerProductos.setAdapter(adapter);
+                if (factura == null || detallesCompletos == null) {
+                    Toast.makeText(this, "Error al cargar los datos de la factura.", Toast.LENGTH_SHORT).show();
+                    return;
                 }
+
+                // 1. Llenar encabezado
+                txtTitulo.setText(String.format(Locale.US, "Detalle de Factura #%d", factura.id_Factura));
+                txtCliente.setText(String.format("Cliente: %s", factura.nombreCliente));
+                txtCedula.setText(String.format("C.I.: %s", factura.cedula));
+                txtDireccion.setText(String.format("Dir: %s", factura.direccion));
+                txtTelefono.setText(String.format("Telf: %s", factura.celular));
+                txtFecha.setText(String.format("Fecha: %s", factura.fecha));
+
+                // 2. Llenar lista de productos
+                adapter = new DetalleProductoAdapter(detallesCompletos);
+                recyclerProductos.setAdapter(adapter);
+
+                // 3. Calcular y mostrar desglose de pie de página
+                calcularYMostrarTotales(detallesCompletos);
             });
         });
+    }
+
+    private void calcularYMostrarTotales(List<DetalleParaLogica> detalles) {
+        double subtotal = 0;
+        double totalIva15 = 0;
+        double totalIva12 = 0;
+        double totalImpSantuario = 0;
+
+        for (DetalleParaLogica item : detalles) {
+            double precioBase = item.producto.precioBase;
+            subtotal += precioBase;
+
+            // Cálculo de impuestos por producto
+            if (item.categoria.iva == 15.0) {
+                totalIva15 += precioBase * 0.15;
+            }
+            if (item.categoria.iva == 12.0) {
+                totalIva12 += precioBase * 0.12;
+            }
+            if (item.categoria.impuesto == 5.0) {
+                totalImpSantuario += precioBase * 0.05;
+            }
+        }
+
+        double totalFinal = subtotal + totalIva15 + totalIva12 + totalImpSantuario;
+
+        // Mostrar valores
+        txtSubtotal.setText(String.format(Locale.US, "Subtotal: $%.2f", subtotal));
+        txtTotal.setText(String.format(Locale.US, "Total Pagado: $%.2f", totalFinal));
+
+        // Mostrar y llenar solo los impuestos que aplican
+        if (totalIva15 > 0) {
+            txtIva15.setText(String.format(Locale.US, "IVA (15%%): $%.2f", totalIva15));
+            txtIva15.setVisibility(View.VISIBLE);
+        }
+        if (totalIva12 > 0) {
+            txtIva12.setText(String.format(Locale.US, "IVA (12%%): $%.2f", totalIva12));
+            txtIva12.setVisibility(View.VISIBLE);
+        }
+        if (totalImpSantuario > 0) {
+            txtImpSantuario.setText(String.format(Locale.US, "Imp. Santuario (5%%): $%.2f", totalImpSantuario));
+            txtImpSantuario.setVisibility(View.VISIBLE);
+        }
     }
 }

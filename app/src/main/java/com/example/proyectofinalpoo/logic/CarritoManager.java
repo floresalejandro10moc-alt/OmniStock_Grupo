@@ -56,4 +56,25 @@ public class CarritoManager {
         }
         return subtotal;
     }
+
+    public java.util.Map<String, Double> calcularDesgloseImpuestos() {
+        java.util.Map<String, Double> totalImpuestos = new java.util.HashMap<>();
+        for (ProductoBase p : carrito) {
+            java.util.Map<String, Double> imp = p.calcularImpuestos();
+            for (java.util.Map.Entry<String, Double> entry : imp.entrySet()) {
+                String k = entry.getKey();
+                Double v = entry.getValue();
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    totalImpuestos.put(k, totalImpuestos.getOrDefault(k, 0.0) + v);
+                } else {
+                    // Compatibilidad simple
+                    Double actual = totalImpuestos.get(k);
+                    if (actual == null)
+                        actual = 0.0;
+                    totalImpuestos.put(k, actual + v);
+                }
+            }
+        }
+        return totalImpuestos;
+    }
 }

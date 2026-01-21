@@ -1,6 +1,7 @@
 package com.example.proyectofinalpoo.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.room.ForeignKey;
@@ -29,6 +30,7 @@ public class DetalleFactura {
     @ColumnInfo(name = "det_Subtotal")
     public double subtotal;
 
+    @Ignore
     public DetalleFactura(int id_Factura, int id_Producto, int cantidad, double precioUnitario, double subtotal) {
         this.id_Factura = id_Factura;
         this.id_Producto = id_Producto;
