@@ -16,11 +16,11 @@
         android:padding="16dp">
 
         <ImageView
-            android:id="@+id/imgIcono"
+            android:id="@+id/imgEliminar"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:src="@android:drawable/ic_menu_agenda"
-            android:contentDescription="Icono de producto"
+            android:src="@android:drawable/ic_menu_delete"
+            android:contentDescription="Eliminar producto"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"/>
@@ -33,7 +33,7 @@
             android:textSize="18sp"
             android:textStyle="bold"
             android:layout_marginStart="16dp"
-            app:layout_constraintStart_toEndOf="@id/imgIcono"
+            app:layout_constraintStart_toEndOf="@id/imgEliminar"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/txtPrecioProducto"/>
 

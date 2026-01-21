@@ -1,78 +1,120 @@
 package com.example.proyectofinalpoo.ui;
 
 import android.os.Bundle;
+import android.util.Patterns;
 import android.widget.Button;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.data.AppDatabase;
-import com.example.proyectofinalpoo.model.Usuario;
+import com.example.proyectofinalpoo.model.*;
+import java.util.regex.Pattern;
 
 public class RegisterActivity extends AppCompatActivity {
 
-    EditText etUsuario, etCorreo, etClave;
-    CheckBox cbEsAdmin;
-    Button btnGuardar, btnCancelar;
+    private EditText etAlias, etCorreo, etClave, etNombre, etApellido, etCedula, etCelular, etDireccion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
 
-        // 1. Vincular vistas
-        etUsuario = findViewById(R.id.etRegUsuario);
-        etCorreo = findViewById(R.id.etRegCorreo);
-        etClave = findViewById(R.id.etRegClave);
-        cbEsAdmin = findViewById(R.id.cbEsAdmin);
-        btnGuardar = findViewById(R.id.btnRegistrarUsuario);
-        btnCancelar = findViewById(R.id.btnCancelar);
+        vincularVistas();
 
-        // 2. Acción del botón Guardar
-        btnGuardar.setOnClickListener(v -> registrarUsuario());
-
-        // 3. Acción del botón Cancelar
-        btnCancelar.setOnClickListener(v -> finish());
+        findViewById(R.id.btnFinalizarRegistro).setOnClickListener(v -> validarYRegistrar());
+        findViewById(R.id.btnRegVolver).setOnClickListener(v -> finish());
     }
 
-    private void registrarUsuario() {
-        String alias = etUsuario.getText().toString().trim();
-        String correo = etCorreo.getText().toString().trim();
-        String clave = etClave.getText().toString().trim();
+    private void vincularVistas() {
+        etAlias = findViewById(R.id.etRegAlias);
+        etCorreo = findViewById(R.id.etRegCorreo);
+        etClave = findViewById(R.id.etRegClave);
+        etNombre = findViewById(R.id.etRegNombre);
+        etApellido = findViewById(R.id.etRegApellido);
+        etCedula = findViewById(R.id.etRegCedula);
+        etCelular = findViewById(R.id.etRegCelular);
+        etDireccion = findViewById(R.id.etRegDireccion);
+    }
 
-        // Validaciones básicas
-        if (alias.isEmpty() || correo.isEmpty() || clave.isEmpty()) {
-            Toast.makeText(this, "Por favor llena todos los campos", Toast.LENGTH_SHORT).show();
+    private void validarYRegistrar() {
+        String correo = etCorreo.getText().toString().trim();
+        String cedula = etCedula.getText().toString().trim();
+        String nombre = etNombre.getText().toString().trim();
+        String apellido = etApellido.getText().toString().trim();
+
+        // 1. Validación de Correo
+        if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+            etCorreo.setError("Correo inválido");
             return;
         }
 
-        // Crear objeto Usuario
-        Usuario nuevoUsuario = new Usuario();
-        nuevoUsuario.alias = alias;
-        nuevoUsuario.correo = correo;
-        nuevoUsuario.clave = clave;
-        nuevoUsuario.estado = "ACT";
-        nuevoUsuario.esAdministrador = cbEsAdmin.isChecked() ? 1 : 0;
+        // 2. Validación de Cédula Ecuatoriana (Algoritmo Módulo 10)
+        if (!validarCedulaEcuatoriana(cedula)) {
+            etCedula.setError("Número de cédula real no válido");
+            return;
+        }
 
-        AppDatabase db = AppDatabase.getDatabase(this);
+        // 3. Solo letras en Nombres y Apellidos
+        if (!Pattern.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", nombre)) {
+            etNombre.setError("Solo se permiten letras");
+            return;
+        }
+        if (!Pattern.matches("^[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+$", apellido)) {
+            etApellido.setError("Solo se permiten letras");
+            return;
+        }
 
-        // 🔴 CAMBIO IMPORTANTE: Usamos el Executor para ir al segundo plano
+        procederConGuardado();
+    }
+
+    private boolean validarCedulaEcuatoriana(String cedula) {
+        if (cedula.length() != 10) return false;
+        try {
+            int provincia = Integer.parseInt(cedula.substring(0, 2));
+            if (provincia < 1 || provincia > 24) return false;
+
+            int d10 = Integer.parseInt(cedula.substring(9, 10));
+            int suma = 0;
+            for (int i = 0; i < 9; i++) {
+                int d = Integer.parseInt(cedula.substring(i, i + 1));
+                if (i % 2 == 0) {
+                    d *= 2;
+                    if (d > 9) d -= 9;
+                }
+                suma += d;
+            }
+            int verificador = (suma % 10 == 0) ? 0 : 10 - (suma % 10);
+            return verificador == d10;
+        } catch (Exception e) { return false; }
+    }
+
+    private void procederConGuardado() {
+        // Captura de datos
+        Usuario u = new Usuario(etAlias.getText().toString(), Usuario.ROL_VENDEDOR,
+                etClave.getText().toString(), etCorreo.getText().toString());
+
+        Cliente c = new Cliente(etNombre.getText().toString(), etApellido.getText().toString(),
+                etCedula.getText().toString(), etDireccion.getText().toString(),
+                etCelular.getText().toString());
+
         AppDatabase.databaseWriteExecutor.execute(() -> {
             try {
-                // 1. Esto ocurre en "segundo plano" (No congela la pantalla)
-                db.inventarioDao().insertarUsuario(nuevoUsuario);
+                // USAMOS LA TRANSACCIÓN QUE CREAMOS
+                AppDatabase.getDatabase(this).inventarioDao().registrarUsuarioYCliente(u, c);
 
-                // 2. Para mostrar mensajes o cambiar de pantalla, debemos VOLVER al hilo principal
                 runOnUiThread(() -> {
-                    Toast.makeText(RegisterActivity.this, "¡Usuario creado! Ingresa ahora.", Toast.LENGTH_LONG).show();
-                    finish(); // Cierra el registro
+                    Toast.makeText(this, "¡Cuenta creada exitosamente!", Toast.LENGTH_SHORT).show();
+                    finish();
                 });
-
-            } catch (Exception e) {
-                // Si falla, también volvemos al hilo principal para mostrar el error
+            } catch (android.database.sqlite.SQLiteConstraintException e) {
                 runOnUiThread(() -> {
-                    Toast.makeText(RegisterActivity.this, "Error: El usuario ya existe.", Toast.LENGTH_SHORT).show();
+                    // ANALIZAMOS QUÉ DATO ES EL DUPLICADO REAL
+                    String msg = e.getMessage();
+                    if (msg.contains("usu_Alias")) etAlias.setError("Este Alias ya existe");
+                    else if (msg.contains("usu_Correo")) etCorreo.setError("Este Correo ya existe");
+                    else if (msg.contains("cli_Cedula")) etCedula.setError("Esta Cédula ya está registrada");
+                    else Toast.makeText(this, "Error: Datos duplicados", Toast.LENGTH_SHORT).show();
                 });
             }
         });

@@ -2,64 +2,107 @@ package com.example.proyectofinalpoo.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.example.proyectofinalpoo.R;
-import com.example.proyectofinalpoo.util.SessionManager; // Importante importar esto
+import com.example.proyectofinalpoo.util.DataGenerator;
+import com.example.proyectofinalpoo.util.SessionManager;
 
-public class    MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
-    Button btnCerrar,btnCarrito;;
+    // Declaramos todos los botones de la interfaz
+    Button btnCerrar, btnCarrito, btnHistorial, btnCatalogo, btnNuevoProd;
+    TextView tvNombreUser;
     SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        // --- LÓGICA DE CARGA ÚNICA ---
+        android.content.SharedPreferences prefs = getSharedPreferences("OmniStockPrefs", MODE_PRIVATE);
+        boolean datosCargados = prefs.getBoolean("datos_iniciales_cargados", false);
 
-        // Inicializar SessionManager
+        if (!datosCargados) {
+            // Solo se ejecuta si es la primera vez
+            DataGenerator.cargar200Datos(this);
+
+            // Guardamos que ya se hizo la carga
+            prefs.edit().putBoolean("datos_iniciales_cargados", true).apply();
+            Toast.makeText(this, "Base de datos inicializada", Toast.LENGTH_SHORT).show();
+        }
+        // ----------------------------
+
+        // 1. Inicializar SessionManager
         session = new SessionManager(this);
 
-        // Verificar si NO está logueado (Seguridad extra por si alguien entra directo)
+        // 2. Verificar si NO está logueado (Seguridad)
         if (!session.estaLogueado()) {
             irAlLogin();
+            return; // Detenemos la ejecución si no hay sesión
         }
 
+        // 3. Vincular Vistas con el XML
+        tvNombreUser = findViewById(R.id.tvNombreUsuario);
         btnCerrar = findViewById(R.id.btnCerrarSesion);
         btnCarrito = findViewById(R.id.btnIrAlCarrito);
-        btnCerrar.setOnClickListener(v -> {
-            // 1. Borrar datos de sesión
-            session.cerrarSesion();
+        btnHistorial = findViewById(R.id.btnHistorial);
 
-            // 2. Volver al Login
+        // Estos IDs deben coincidir con tu activity_main.xml
+        btnCatalogo = findViewById(R.id.btnIrAlInventario);
+        btnNuevoProd = findViewById(R.id.btnAgregarProducto);
+
+        // 4. Mostrar nombre del usuario en la cabecera
+        String alias = session.getAliasLogueado();
+        tvNombreUser.setText("Bienvenido, " + alias);
+
+        // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
+        if (!session.esAdmin()) {
+            btnNuevoProd.setVisibility(View.GONE);
+        }
+
+        // --- LISTENERS (ACCIONES DE LOS BOTONES) ---
+
+        // A) Botón Cerrar Sesión
+        btnCerrar.setOnClickListener(v -> {
+            session.cerrarSesion();
             irAlLogin();
         });
 
-        // 3. Acción para IR AL CARRITO (Aquí está la conexión que buscabas)
+        // B) Botón Ir al Carrito
         btnCarrito.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CarritoActivity.class);
             startActivity(intent);
         });
 
-        /*
-        // "Script para actualizar el IVA"
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            AppDatabase.getDatabase(context).inventarioDao().actualizarIVACategoria("Electronica", 8.0);
+        // C) Botón Ir al Historial
+        btnHistorial.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, HistorialFacturasActivity.class);
+            startActivity(intent);
         });
-        */
 
-
-        /*// "Script para actualizar el impuesto"
-        AppDatabase.databaseWriteExecutor.execute(() -> {
-            AppDatabase.getDatabase(this).inventarioDao()
-                .actualizarImpuestoCategoria("Electronica", 0.10); // Ojo: 0.10 si usas decimales, o 10.0 si usas porcentajes
+        // D) Botón Catálogo (Inventario)
+        btnCatalogo.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CatalogoActivity.class);
+            startActivity(intent);
         });
-        * */
+
+        // E) Botón Nuevo Producto (Solo Admin)
+        btnNuevoProd.setOnClickListener(v -> {
+            // Cuando crees la pantalla de AltaProductoActivity, descomenta abajo:
+            // Intent intent = new Intent(MainActivity.this, AltaProductoActivity.class);
+            // startActivity(intent);
+
+            Toast.makeText(this, "Próximamente: Crear Producto", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void irAlLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
-        // Esto evita que puedan volver atrás con el botón del celular
+        // Flags para limpiar el historial y que no puedan volver atrás
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();

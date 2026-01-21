@@ -15,8 +15,9 @@ import androidx.room.Index;
 public class DetalleFactura {
     @PrimaryKey(autoGenerate = true)
     public int id_Detalle;
-
+    @ColumnInfo(name = "id_Factura")
     public int id_Factura;
+    @ColumnInfo(name = "id_Producto")
     public int id_Producto;
 
     @ColumnInfo(name = "det_Cantidad")
@@ -34,5 +35,8 @@ public class DetalleFactura {
         this.cantidad = cantidad;
         this.precioUnitario = precioUnitario;
         this.subtotal = subtotal;
+    }
+    public DetalleFactura() {
+
     }
 }
