@@ -1,6 +1,7 @@
 package com.example.proyectofinalpoo.model;
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ForeignKey;
 import androidx.room.ColumnInfo;
@@ -43,6 +44,7 @@ public class Producto {
     public Producto() {}
 
     // Constructor completo
+    @Ignore
     public Producto(int id_Categoria, String nombre, String descripcion, double precio, int stock, int tempAnterior, String caducidad) {
         this.id_Categoria = id_Categoria;
         this.nombre = nombre;

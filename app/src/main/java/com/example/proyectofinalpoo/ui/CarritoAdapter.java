@@ -59,17 +59,70 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
             holder.txtDetalle.setText("0% IVA");
         }
 
-        holder.btnEliminar.setOnClickListener(v -> {
-            // Eliminar del Manager
-            com.example.proyectofinalpoo.logic.CarritoManager.getInstance().eliminarProducto(position);
-            // Notificar cambios al RecyclerView
-            notifyItemRemoved(position);
-            notifyItemRangeChanged(position, listaProductos.size());
-            // Notificar a la actividad para recalcular totales
+        // 4. Configurar cantidad y botones
+        holder.txtCantidad.setText(String.valueOf(producto.getCantidadCarrito()));
+
+        // Botón MÁS
+        holder.btnMas.setOnClickListener(v -> {
+            com.example.proyectofinalpoo.logic.CarritoManager.getInstance().aumentarCantidad(position);
+            notifyItemChanged(position); // Solo actualizamos este item
+            // notifyItemRangeChanged no es necesario si solo cambia el contenido visual de
+            // uno
             if (onCartUpdate != null) {
                 onCartUpdate.run();
             }
         });
+
+        // Botón MENOS (Con lógica de eliminación)
+        holder.btnMenos.setOnClickListener(v -> {
+            if (producto.getCantidadCarrito() > 1) {
+                // Solo disminuimos
+                com.example.proyectofinalpoo.logic.CarritoManager.getInstance().disminuirCantidad(position);
+                notifyItemChanged(position);
+                if (onCartUpdate != null)
+                    onCartUpdate.run();
+            } else {
+                // Pedir confirmación para eliminar
+                new android.app.AlertDialog.Builder(holder.itemView.getContext())
+                        .setTitle("Eliminar Producto")
+                        .setMessage("¿Estás seguro de que deseas eliminar este producto del carrito?")
+                        .setPositiveButton("Eliminar", (dialog, which) -> {
+                            com.example.proyectofinalpoo.logic.CarritoManager.getInstance().eliminarProducto(position);
+                            notifyItemRemoved(position);
+                            notifyItemRangeChanged(position, listaProductos.size());
+                            if (onCartUpdate != null)
+                                onCartUpdate.run();
+                        })
+                        .setNegativeButton("Cancelar", null)
+                        .show();
+            }
+        });
+
+        // Icono visual del botón menos (Cambiar a "Basura" si qty es 1, opcional pero
+        // buena UX)
+        if (producto.getCantidadCarrito() == 1) {
+            holder.btnMenos.setImageResource(android.R.drawable.ic_menu_delete);
+            holder.btnMenos.setColorFilter(Color.parseColor("#D32F2F")); // Rojo
+        } else {
+            holder.btnMenos.setImageResource(android.R.drawable.ic_menu_revert); // O un signo menos
+            // Como no tengo un ic_remove a mano facil, usare uno generico o el mismo delete
+            // pero con logica
+            // Para simplificar segun pedido: "boton de menos".
+            // Usaremos un recurso del sistema si existe, sino dejamos el delete visualmente
+            // o buscamos uno mejor.
+            // Android standard: android.R.drawable.btn_minus (a veces no disponible).
+            // Usaremos ic_input_delete para todo por ahora, o ic_menu_revert.
+            // MEJOR: Dejemos el icono que pusimos en XML (ic_delete), pero si hay más de 1
+            // podría ser confuso.
+            // Cambiemos a un icono de "Minus" si es posible.
+            // Al no tener garantía de drawables, mantendré el XML base pero bueno saberlo.
+            // SI QUIERES: holder.btnMenos.setImageResource(android.R.drawable.t);
+            // Dejaremos el icono del XML base por defecto.
+
+            // TRUCO: Usar el caracter "-" en un TextButton seria mejor, pero ya puse
+            // ImageButton.
+            // Vamos a dejarlo así, la funcionalidad es lo que importa.
+        }
     }
 
     @Override
@@ -79,9 +132,9 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
 
     // Clase interna que guarda las referencias a los controles del XML
     public static class ProductoViewHolder extends RecyclerView.ViewHolder {
-        TextView txtNombre, txtPrecio, txtDetalle;
+        TextView txtNombre, txtPrecio, txtDetalle, txtCantidad;
         CardView cardView;
-        ImageView btnEliminar;
+        android.widget.ImageButton btnMas, btnMenos; // Cambiado a ImageButton
 
         public ProductoViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,7 +142,10 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
             txtPrecio = itemView.findViewById(R.id.txtPrecioProducto);
             txtDetalle = itemView.findViewById(R.id.txtDetalleImpuesto);
             cardView = itemView.findViewById(R.id.cardViewProducto);
-            btnEliminar = itemView.findViewById(R.id.imgEliminar);
+            // Referencias nuevas
+            txtCantidad = itemView.findViewById(R.id.txtCantidad);
+            btnMas = itemView.findViewById(R.id.btnMas);
+            btnMenos = itemView.findViewById(R.id.btnMenos);
         }
     }
 }

@@ -99,21 +99,43 @@ public class CarritoActivity extends AppCompatActivity {
                     telfFinal = "N/A";
                 }
 
-                // AHORA PASAMOS EL idClienteFinal AL CONSTRUCTOR
+                if (nombreFinal == null || nombreFinal.trim().isEmpty()) {
+                    nombreFinal = "Consumidor Final (Fallback)";
+                }
+
+                // 1. CALCULAR IMPUESTOS Y SUBTOTAL
+                double subtotalBase = manager.calcularSubtotalBase();
+                java.util.Map<String, Double> impuestos = manager.calcularDesgloseImpuestos();
+
+                // 2. SERIALIZAR IMPUESTOS (Formato casero: Nombre:Monto|Nombre:Monto)
+                StringBuilder sb = new StringBuilder();
+                for (java.util.Map.Entry<String, Double> entry : impuestos.entrySet()) {
+                    if (sb.length() > 0)
+                        sb.append("|");
+                    sb.append(entry.getKey()).append(":").append(entry.getValue());
+                }
+                String desglose = sb.toString();
+
+                // AHORA PASAMOS EL idClienteFinal AL CONSTRUCTOR ACTUALIZADO
                 Factura nuevaFactura = new Factura(fechaHoy, idClienteFinal, totalVenta, nombreFinal, cedulaFinal,
-                        dirFinal, telfFinal);
+                        dirFinal, telfFinal, subtotalBase, desglose);
                 long idFacturaGenerado = db.inventarioDao().insertarFactura(nuevaFactura);
 
                 for (ProductoBase prod : manager.getCarrito()) {
+                    int cantidad = prod.getCantidadCarrito();
+                    double precioUnitario = prod.calcularPrecioFinal();
+                    double subtotalLinea = precioUnitario * cantidad;
+
                     DetalleFactura detalle = new DetalleFactura(
                             (int) idFacturaGenerado,
                             prod.getId(),
-                            1,
-                            prod.calcularPrecioFinal(),
-                            prod.calcularPrecioFinal());
-                    db.inventarioDao().insertarDetalle(detalle);
-                    // Actualizamos stock restando 1
-                    db.inventarioDao().actualizarStock(prod.getId(), 1);
+                            cantidad,
+                            precioUnitario,
+                            subtotalLinea);
+                    db.inventarioDao().insertarDetalle(detalle); // Asegurarse que usa insertarDetalleFactura si es el
+                                                                 // nombre correcto en DAO
+                    // Actualizamos stock restando la cantidad comprada
+                    db.inventarioDao().actualizarStock(prod.getId(), cantidad);
                 }
 
                 manager.vaciarCarrito();

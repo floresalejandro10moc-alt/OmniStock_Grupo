@@ -10,9 +10,8 @@ import com.example.proyectofinalpoo.model.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-// 1. Aquí definimos las tablas de la base de datos
-@Database(entities = { Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class,
-        DetalleFactura.class }, version = 2, exportSchema = false)
+// ¡VERSIÓN 3! Esto fuerza la recreación de la base de datos.
+@Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class, DetalleFactura.class}, version = 3, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
     public abstract InventarioDao inventarioDao();
@@ -20,74 +19,49 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
-    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    public static final ExecutorService databaseWriteExecutor =
+            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
-    // 2. EL CALLBACK MÁGICO
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 
             databaseWriteExecutor.execute(() -> {
-                // --- USUARIOS (ESTO ESTABA BIEN) ---
-                // Usaste usu_Alias, usu_Clave, etc. Esto coincide con tu modelo Usuario. ¡Bien!
-                db.execSQL(
-                        "INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('AdminAlejo', 'admin123', 'admin@omnistock.com', 1, 'ACT')");
-                db.execSQL(
-                        "INSERT INTO USUARIOS (usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES ('VendedorJuan', 'vend123', 'juan@omnistock.com', 0, 'ACT')");
+                // --- Inserción de datos iniciales ---
 
-                // --- CATEGORIAS (AQUÍ ESTÁ LA CORRECCIÓN) ---
-                // Antes decia: (nombre, iva, impuesto_adicional) -> ERROR
-                // Ahora dice: (cat_Nombre, cat_IVA, cat_Impuesto) -> CORRECTO
-                db.execSQL(
-                        "INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Electronica', 15.0, 5.0)"); // 5%
-                                                                                                                        // suntuario
-                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Ropa', 12.0, 0.0)");
-                db.execSQL("INSERT INTO CATEGORIA (cat_Nombre, cat_IVA, cat_Impuesto) VALUES ('Alimentos', 0.0, 0.0)");
+                // 1. Usuarios
+                db.execSQL("INSERT INTO USUARIOS (id_Usuario, usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES (1, 'AdminAlejo', 'admin123', 'admin@omnistock.com', 1, 'ACT')");
+                db.execSQL("INSERT INTO USUARIOS (id_Usuario, usu_Alias, usu_Clave, usu_Correo, usu_Administrador, usu_Estado) VALUES (2, 'VendedorJuan', 'vend123', 'juan@omnistock.com', 0, 'ACT')");
 
-                // --- 3. PRODUCTOS (¡ESTO FALTABA!) ---
-                // OJO: Insertamos manualmente los IDs (1, 2, 3) para que coincidan con
-                // PruebaLogica
+                // 2. Cliente (Asociado a VendedorJuan, ID 2)
+                db.execSQL("INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular, cli_Estado) VALUES (2, 'Juan', 'Perez', '0987654321', 'Av. Siempre Viva 123', '0991234567', 'ACT')");
 
-                // Producto 1: PlayStation (id_Categoria = 1 Electronica)
-                db.execSQL(
-                        "INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (1, 1, 'PlayStation 5 (Test)', 100.0, 10, 0, 'ACT')");
+                // 3. Categorías
+                db.execSQL("INSERT INTO CATEGORIA (id_Categoria, cat_Nombre, cat_IVA, cat_Impuesto) VALUES (1, 'Electronica', 15.0, 5.0)");
+                db.execSQL("INSERT INTO CATEGORIA (id_Categoria, cat_Nombre, cat_IVA, cat_Impuesto) VALUES (2, 'Ropa', 12.0, 0.0)");
+                db.execSQL("INSERT INTO CATEGORIA (id_Categoria, cat_Nombre, cat_IVA, cat_Impuesto) VALUES (3, 'Alimentos', 0.0, 0.0)");
 
-                // Producto 2: Camisa Vieja (id_Categoria = 2 Ropa)
-                db.execSQL(
-                        "INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (2, 2, 'Camisa Vieja (Test)', 100.0, 5, 1, 'ACT')");
-
-                // Producto 3: Manzanas (id_Categoria = 3 Alimentos)
-                db.execSQL(
-                        "INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior, pro_Estado) VALUES (3, 3, 'Manzanas (Test)', 50.0, 100, 0, 'ACT')");
-
-                // --- 4. CLIENTES PARA USUARIOS DEFAULT ---
-                // AdminAlejo (ID 1)
-                db.execSQL(
-                        "INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular) VALUES (1, 'Alejandro', 'Flores', '1712345678', 'Quito Centro', '0998877665')");
-                // VendedorJuan (ID 2)
-                db.execSQL(
-                        "INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular) VALUES (2, 'Juan', 'Perez', '1787654321', 'Guayaquil Norte', '0988112233')");
-
+                // 4. Productos de Prueba (¡LA RAÍZ DEL PROBLEMA!)
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior) VALUES (1, 1, 'PlayStation 5', 100.0, 10, 0)");
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior) VALUES (2, 2, 'Camisa Vieja', 100.0, 5, 1)");
+                db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_EsTemporadaAnterior) VALUES (3, 3, 'Manzanas', 50.0, 100, 0)");
             });
         }
     };
-
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                            AppDatabase.class, "omnistock_db")
+                                    AppDatabase.class, "omnistock_db")
                             .addCallback(sRoomDatabaseCallback)
-                            .fallbackToDestructiveMigration()
-                            .allowMainThreadQueries()
+                            .fallbackToDestructiveMigration() // Permite destruir la BD al cambiar de versión
                             .build();
                 }
             }
         }
         return INSTANCE;
     }
-
 }

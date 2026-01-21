@@ -53,7 +53,7 @@ public class FacturaAdapter extends RecyclerView.Adapter<FacturaAdapter.FacturaV
                     Factura facturaSeleccionada = facturas.get(position);
                     Context context = itemView.getContext();
                     Intent intent = new Intent(context, DetalleFacturaActivity.class);
-                    intent.putExtra("FACTURA_ID", facturaSeleccionada.id_Factura);
+                    intent.putExtra("FACTURA_ID", (long) facturaSeleccionada.id_Factura);
                     context.startActivity(intent);
                 }
             });
