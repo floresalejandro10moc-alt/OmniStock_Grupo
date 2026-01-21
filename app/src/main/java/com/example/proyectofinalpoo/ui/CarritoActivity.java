@@ -122,16 +122,20 @@ public class CarritoActivity extends AppCompatActivity {
                 long idFacturaGenerado = db.inventarioDao().insertarFactura(nuevaFactura);
 
                 for (ProductoBase prod : manager.getCarrito()) {
+                    int cantidad = prod.getCantidadCarrito();
+                    double precioUnitario = prod.calcularPrecioFinal();
+                    double subtotalLinea = precioUnitario * cantidad;
+
                     DetalleFactura detalle = new DetalleFactura(
                             (int) idFacturaGenerado,
                             prod.getId(),
-                            1,
-                            prod.calcularPrecioFinal(),
-                            prod.calcularPrecioFinal());
+                            cantidad,
+                            precioUnitario,
+                            subtotalLinea);
                     db.inventarioDao().insertarDetalle(detalle); // Asegurarse que usa insertarDetalleFactura si es el
                                                                  // nombre correcto en DAO
-                    // Actualizamos stock restando 1
-                    db.inventarioDao().actualizarStock(prod.getId(), 1);
+                    // Actualizamos stock restando la cantidad comprada
+                    db.inventarioDao().actualizarStock(prod.getId(), cantidad);
                 }
 
                 manager.vaciarCarrito();

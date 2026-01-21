@@ -33,4 +33,15 @@ public abstract class ProductoBase {
 
     // Nuevo método abstracto para desglose de impuestos
     public abstract java.util.Map<String, Double> calcularImpuestos();
+
+    // --- MANEJO DE CANTIDAD ---
+    protected int cantidadCarrito = 1;
+
+    public void setCantidadCarrito(int cantidadCarrito) {
+        this.cantidadCarrito = cantidadCarrito;
+    }
+
+    public int getCantidadCarrito() {
+        return cantidadCarrito;
+    }
 }
