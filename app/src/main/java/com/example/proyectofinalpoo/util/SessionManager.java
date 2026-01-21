@@ -57,4 +57,7 @@ public class SessionManager {
     public boolean esAdmin() {
         return pref.getInt(KEY_USER_ROLE, 0) == 1;
     }
+    public int getUserId() {
+        return pref.getInt(KEY_USER_ID, -1);
+    }
 }
