@@ -67,6 +67,16 @@
             android:backgroundTint="#37474F"
             android:layout_marginBottom="40dp"
             android:elevation="4dp"/>
+        <Button
+            android:id="@+id/btnGestionCategorias"
+            android:layout_width="match_parent"
+            android:layout_height="65dp"
+            android:text="📂 GESTIÓN DE CATEGORÍAS"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:backgroundTint="#673AB7"
+            android:layout_marginBottom="16dp"
+            android:elevation="4dp"/>
 
         <Button
             android:id="@+id/btnCerrarSesion"
@@ -77,6 +87,7 @@
             android:padding="15dp"
             android:backgroundTint="#D32F2F"
             android:elevation="2dp"/>
+
 
     </LinearLayout>
 </ScrollView>

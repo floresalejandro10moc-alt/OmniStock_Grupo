@@ -5,4 +5,9 @@
     <string name="hint_password">Contraseña</string>
     <string name="btn_login_text">INGRESAR</string>
     <string name="signup_prompt">¿No tienes cuenta? Regístrate aquí</string>
+    <string name="hint_nombre_cat">Nombre de categoría</string>
+    <string name="hint_descripcion_cat">Descripción</string>
+    <string name="hint_iva_cat">IVA (0.15)</string>
+    <string name="hint_impuesto_cat">Impuesto (0.05)</string>
+    <string name="nombre">Nombre</string>
 </resources>

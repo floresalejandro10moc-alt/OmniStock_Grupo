@@ -1,12 +1,33 @@
 package com.example.proyectofinalpoo.logic;
 
-// Clase Abstracta: Define el comportamiento, no guarda datos en BD
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+import androidx.room.ColumnInfo;
+
+@Entity(tableName = "PRODUCTOS")
 public abstract class ProductoBase {
-    protected int id; // <--- AGREGA ESTO
-    protected String nombre;
-    protected double precioBase;
-    protected int stock;
-    protected double ivaActual; // El valor del IVA se lo pasaremos desde fuera
+    @PrimaryKey(autoGenerate = true)
+    @ColumnInfo(name = "id_Producto")
+    public int id; // ID para la base de datos
+
+    @ColumnInfo(name = "id_Categoria")
+    public int idCategoria;
+
+    @ColumnInfo(name = "pro_Nombre")
+    public String nombre;
+
+    @ColumnInfo(name = "pro_PrecioBase")
+    public double precioBase;
+
+    @ColumnInfo(name = "pro_Stock")
+    public int stock;
+
+    @ColumnInfo(name = "ivaActual")
+    public double ivaActual;
+
+    // CAMPOS NECESARIOS PARA LOS HIJOS (Ropa y Alimento)
+    @ColumnInfo(name = "pro_EsTemporadaAnterior")
+    public int esTemporadaAnterior;
 
     public ProductoBase(int id, String nombre, double precioBase, int stock, double ivaActual) {
         this.id = id;
@@ -16,7 +37,6 @@ public abstract class ProductoBase {
         this.ivaActual = ivaActual;
     }
 
-    // MÉTODO POLIMÓRFICO: Cada hijo definirá su fórmula
     public abstract double calcularPrecioFinal();
 
     public String getNombre() {
