@@ -33,5 +33,8 @@ public class Producto {
     @ColumnInfo(name = "pro_EsTemporadaAnterior", defaultValue = "0")
     public int esTemporadaAnterior;
 
+    @ColumnInfo(name = "pro_Estado", defaultValue = "ACT")
+    public String estado;
+
     public Producto() {}
 }
