@@ -8,7 +8,7 @@ public abstract class ProductoBase {
     protected int stock;
     protected double ivaActual; // El valor del IVA se lo pasaremos desde fuera
 
-    public ProductoBase(int id,String nombre, double precioBase, int stock, double ivaActual) {
+    public ProductoBase(int id, String nombre, double precioBase, int stock, double ivaActual) {
         this.id = id;
         this.nombre = nombre;
         this.precioBase = precioBase;
@@ -19,8 +19,29 @@ public abstract class ProductoBase {
     // MÉTODO POLIMÓRFICO: Cada hijo definirá su fórmula
     public abstract double calcularPrecioFinal();
 
-    public String getNombre() { return nombre; }
-    public double getPrecioBase() { return precioBase; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public int getId() { return id; }
+    public double getPrecioBase() {
+        return precioBase;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    // Nuevo método abstracto para desglose de impuestos
+    public abstract java.util.Map<String, Double> calcularImpuestos();
+
+    // --- MANEJO DE CANTIDAD ---
+    protected int cantidadCarrito = 1;
+
+    public void setCantidadCarrito(int cantidadCarrito) {
+        this.cantidadCarrito = cantidadCarrito;
+    }
+
+    public int getCantidadCarrito() {
+        return cantidadCarrito;
+    }
 }

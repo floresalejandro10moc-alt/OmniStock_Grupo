@@ -2,6 +2,7 @@ package com.example.proyectofinalpoo.model;
 
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ForeignKey;
 import androidx.room.ColumnInfo;
@@ -40,6 +41,7 @@ public class Cliente {
 
     public Cliente() {}
 
+    @Ignore
     public Cliente(String nombre, String apellido, String cedula, String direccion, String celular) {
         this.nombre = nombre;
         this.apellido = apellido;

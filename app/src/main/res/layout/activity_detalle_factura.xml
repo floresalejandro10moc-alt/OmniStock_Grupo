@@ -7,6 +7,7 @@
     android:padding="16dp"
     tools:context=".ui.DetalleFacturaActivity">
 
+    <!-- ENCABEZADO -->
     <TextView
         android:id="@+id/txtDetalleFacturaTitulo"
         android:layout_width="wrap_content"
@@ -19,14 +20,35 @@
         android:id="@+id/txtDetalleFacturaCliente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Cliente: Consumidor Final"
+        android:text="Cliente: Cargando..."
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/txtDetalleFacturaCedula"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="C.I.: Cargando..."
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/txtDetalleFacturaDireccion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Dir: Cargando..."
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/txtDetalleFacturaTelefono"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Telf: Cargando..."
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/txtDetalleFacturaFecha"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Fecha: 01/01/2024"
+        android:text="Fecha: Cargando..."
         android:textSize="16sp" />
 
     <View
@@ -34,8 +56,9 @@
         android:layout_height="1dp"
         android:background="@android:color/darker_gray"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"/>
+        android:layout_marginBottom="8dp"/>
 
+    <!-- LISTA DE PRODUCTOS -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -43,19 +66,51 @@
         android:textSize="18sp"
         android:textStyle="bold"/>
 
-    <TextView
-        android:id="@+id/txtDetalleFacturaCantidad"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Cantidad Total: 0"
-        android:textSize="14sp"
-        android:layout_marginBottom="8dp"/>
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerDetalleProductos"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    <!-- PIE DE PÁGINA (DESGLOSE) -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@android:color/darker_gray"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"/>
+
+    <TextView
+        android:id="@+id/txtDetalleSubtotal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="Subtotal: $0.00"
+        android:textSize="16sp" />
+
+    <TextView
+        android:id="@+id/txtDetalleIva15"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="IVA (15%): $0.00"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/txtDetalleIva12"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="IVA (12%): $0.00"
+        android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/txtDetalleImpSantuario"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="end"
+        android:text="Imp. Santuario (5%): $0.00"
+        android:visibility="gone" />
 
     <TextView
         android:id="@+id/txtDetalleFacturaTotal"
@@ -65,20 +120,6 @@
         android:text="Total Pagado: $0.00"
         android:textSize="20sp"
         android:textStyle="bold"
-        android:layout_marginTop="16dp"/>
-
-    <TextView
-        android:id="@+id/txtDetalleFacturaCedula"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="C.I.: 1700000000"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/txtDetalleFacturaDireccion"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Dir: Quito, Ecuador"
-        android:textSize="14sp" />
+        android:layout_marginTop="8dp"/>
 
 </LinearLayout>
