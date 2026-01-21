@@ -10,6 +10,7 @@ import com.example.proyectofinalpoo.model.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+// 1. Aquí definimos las tablas de la base de datos
 @Database(entities = {Usuario.class, Categoria.class, Producto.class, Cliente.class, Factura.class, DetalleFactura.class}, version = 4, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 
@@ -20,8 +21,7 @@ public abstract class AppDatabase extends RoomDatabase {
     private static volatile AppDatabase INSTANCE;
     private static final int NUMBER_OF_THREADS = 4;
 
-    public static final ExecutorService databaseWriteExecutor =
-            Executors.newFixedThreadPool(NUMBER_OF_THREADS);
+    public static final ExecutorService databaseWriteExecutor = Executors.newFixedThreadPool(NUMBER_OF_THREADS);
 
     private static RoomDatabase.Callback sRoomDatabaseCallback = new RoomDatabase.Callback() {
         @Override
@@ -42,16 +42,23 @@ public abstract class AppDatabase extends RoomDatabase {
                 db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_ImagenResId, pro_EsTemporadaAnterior) VALUES (1, 1, 'PlayStation 5', 500.0, 15, 0, 0)");
                 db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_ImagenResId, pro_EsTemporadaAnterior) VALUES (2, 2, 'Camisa de Temporada', 25.0, 50, 0, 0)");
                 db.execSQL("INSERT INTO PRODUCTOS (id_Producto, id_Categoria, pro_Nombre, pro_PrecioBase, pro_Stock, pro_ImagenResId, pro_EsTemporadaAnterior) VALUES (3, 3, 'Manzanas Frescas', 2.5, 200, 0, 0)");
+
+                // --- 4. CLIENTES PARA USUARIOS DEFAULT ---
+                // AdminAlejo (ID 1)
+                db.execSQL("INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular) VALUES (1, 'Alejandro', 'Flores', '1712345678', 'Quito Centro', '0998877665')");
+                // VendedorJuan (ID 2)
+                db.execSQL("INSERT INTO CLIENTE (id_Usuario, cli_Nombre, cli_Apellido, cli_Cedula, cli_Direccion, cli_Celular) VALUES (2, 'Juan', 'Perez', '1787654321', 'Guayaquil Norte', '0988112233')");
             });
         }
     };
+
 
     public static AppDatabase getDatabase(final Context context) {
         if (INSTANCE == null) {
             synchronized (AppDatabase.class) {
                 if (INSTANCE == null) {
                     INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
-                                    AppDatabase.class, "omnistock_db")
+                            AppDatabase.class, "omnistock_db")
                             .addCallback(sRoomDatabaseCallback)
                             .fallbackToDestructiveMigration() // La base de datos se recreará por el cambio de versión.
                             .build();

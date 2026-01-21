@@ -36,18 +36,34 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <Button
+            android:id="@+id/btnAgregarProducto"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="+"
+            android:visibility="gone"
+            tools:visibility="visible"/>
+
+        <Button
+            android:id="@+id/btnHistorial"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Historial" />
+
+        <Button
             android:id="@+id/btnIrAlCarrito"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Ver Carrito" />
+            android:text="Carrito" />
 
         <Button
             android:id="@+id/btnCerrarSesion"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Cerrar Sesión" />
+            android:text="Salir" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

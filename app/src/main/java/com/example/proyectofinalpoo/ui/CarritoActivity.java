@@ -14,10 +14,15 @@ import com.example.proyectofinalpoo.data.AppDatabase;
 import com.example.proyectofinalpoo.logic.CarritoManager;
 import com.example.proyectofinalpoo.logic.ProductoBase;
 import com.example.proyectofinalpoo.logic.PruebaLogica;
+import com.example.proyectofinalpoo.model.Cliente;
 import com.example.proyectofinalpoo.model.DetalleFactura;
 import com.example.proyectofinalpoo.model.Factura;
+import com.example.proyectofinalpoo.util.SessionManager;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CarritoActivity extends AppCompatActivity {
 
@@ -25,6 +30,7 @@ public class CarritoActivity extends AppCompatActivity {
     private CarritoAdapter adapter;
     private TextView txtTotal, txtSubtotal, txtImpuestos, txtCantidad;
     private Button btnPagar, btnCancelar;
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,112 +38,115 @@ public class CarritoActivity extends AppCompatActivity {
         setContentView(R.layout.activity_carrito);
 
         // 1. Conectar variables con el XML
+        session = new SessionManager(this);
         recyclerView = findViewById(R.id.recyclerCarrito);
         txtTotal = findViewById(R.id.txtTotalPagar);
-        txtSubtotal = findViewById(R.id.txtSubtotal); // Nuevo
-        txtImpuestos = findViewById(R.id.txtImpuestos); // Nuevo
-        txtCantidad = findViewById(R.id.txtCantidadItems); // Nuevo
+        txtSubtotal = findViewById(R.id.txtSubtotal);
+        txtImpuestos = findViewById(R.id.txtImpuestos);
+        txtCantidad = findViewById(R.id.txtCantidadItems);
         btnPagar = findViewById(R.id.btnFinalizarCompra);
         btnCancelar = findViewById(R.id.btnCancelar);
-        // 2. CARGAR DATOS DE PRUEBA (MOCKING)
-        // Aquí simulamos que el usuario ya agregó cosas.
-        // Usamos tu clase 'PruebaLogica' para obtener la lista falsa.
-        List<ProductoBase> misProductosFalsos = PruebaLogica.getProductosSimulados();
 
-        // Los metemos al Manager para que calcule el total
+        // 2. Cargar datos del carrito
         CarritoManager manager = CarritoManager.getInstance();
-        manager.vaciarCarrito(); // Limpiar por si acaso
-        for (ProductoBase p : misProductosFalsos) {
-            manager.agregarProducto(p);
-        }
 
-        // 3. CONFIGURAR EL RECYCLERVIEW
+        // 3. Configurar el RecyclerView
+
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        adapter = new CarritoAdapter(manager.getCarrito());
+        adapter = new CarritoAdapter(manager.getCarrito(), this::actualizarTotal);
         recyclerView.setAdapter(adapter);
 
-        // 4. MOSTRAR EL TOTAL
+        // 4. Mostrar el total
         actualizarTotal();
 
         // Lógica del botón Cancelar
-        btnCancelar.setOnClickListener(v -> {
-            // Simplemente cerramos esta ventana y Android vuelve a la anterior
-            finish();
-        });
+        btnCancelar.setOnClickListener(v -> finish());
 
+        // Lógica del botón Pagar
         btnPagar.setOnClickListener(v -> {
-            // 1. Validar que hay cosas en el carrito
             if (manager.getCarrito().isEmpty()) {
                 Toast.makeText(this, "El carrito está vacío", Toast.LENGTH_SHORT).show();
                 return;
             }
+            finalizarCompra(manager);
+        });
+    }
 
-            // 2. Preparar datos para guardar
-            double totalVenta = manager.calcularTotalPagar();
-            String fechaHoy = new java.text.SimpleDateFormat("dd/MM/yyyy").format(new java.util.Date());
+    private void finalizarCompra(CarritoManager manager) {
+        double totalVenta = manager.calcularTotalPagar();
+        String fechaHoy = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(new Date());
 
-            // 3. Ejecutar Transacción en Segundo Plano
-            AppDatabase.databaseWriteExecutor.execute(() -> {
-                AppDatabase db = AppDatabase.getDatabase(CarritoActivity.this);
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(CarritoActivity.this);
 
-                try {
-                    // A) Crear Cabecera de Factura
-                    Factura nuevaFactura = new Factura(fechaHoy, totalVenta, "Consumidor Final");
+            try {
+                String aliasLogueado = session.getAliasLogueado();
+                Cliente clienteData = db.inventarioDao().obtenerClientePorAlias(aliasLogueado);
 
-                    // B) Insertar y OBTENER EL ID generado (Vital para los detalles)
-                    long idFacturaGenerado = db.inventarioDao().insertarFactura(nuevaFactura);
+                Integer idClienteFinal = null; // Por defecto null si es Consumidor Final
+                String nombreFinal, cedulaFinal, dirFinal, telfFinal;
 
-                    // C) Recorrer el carrito y guardar cada producto
-                    for (ProductoBase prod : manager.getCarrito()) {
-
-                        // C.1 Guardar Detalle
-                        DetalleFactura detalle = new DetalleFactura(
-                                (int) idFacturaGenerado,
-                                prod.getId(), // Asegúrate de haber hecho el PASO 0
-                                1, // Por ahora asumimos cantidad 1 por item en la lista
-                                prod.calcularPrecioFinal(),
-                                prod.calcularPrecioFinal()
-                        );
-                        db.inventarioDao().insertarDetalle(detalle);
-
-                        // C.2 DESCONTAR STOCK (¡Requisito de Rúbrica!)
-                        db.productoDao().actualizarStock(prod.getId(), 1);
-                    }
-
-                    // D) Limpiar carrito y avisar
-                    manager.vaciarCarrito();
-
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "¡Venta Exitosa! Factura #" + idFacturaGenerado, Toast.LENGTH_LONG).show();
-                        adapter.notifyDataSetChanged(); // Refrescar lista vacía
-                        finish(); // Volver al menú
-                    });
-
-                } catch (Exception e) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Error en transacción: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
+                if (clienteData != null) {
+                    idClienteFinal = clienteData.id_Cliente; // <-- Obtenemos el ID real
+                    nombreFinal = clienteData.nombre + " " + clienteData.apellido;
+                    cedulaFinal = clienteData.cedula;
+                    dirFinal = clienteData.direccion;
+                    telfFinal = clienteData.celular;
+                } else {
+                    nombreFinal = "Consumidor Final";
+                    cedulaFinal = "9999999999";
+                    dirFinal = "N/A";
+                    telfFinal = "N/A";
                 }
-            });
+
+                // AHORA PASAMOS EL idClienteFinal AL CONSTRUCTOR
+                Factura nuevaFactura = new Factura(fechaHoy, idClienteFinal, totalVenta, nombreFinal, cedulaFinal,
+                        dirFinal, telfFinal);
+                long idFacturaGenerado = db.inventarioDao().insertarFactura(nuevaFactura);
+
+                // C) Recorrer el carrito y guardar cada producto
+                for (ProductoBase prod : manager.getCarrito()) {
+
+                    // C.1 Guardar Detalle
+                    DetalleFactura detalle = new DetalleFactura(
+                            (int) idFacturaGenerado,
+                            prod.getId(), // Asegúrate de haber hecho el PASO 0
+                            1, // Por ahora asumimos cantidad 1 por item en la lista
+                            prod.calcularPrecioFinal(),
+                            prod.calcularPrecioFinal()
+                    );
+                    db.inventarioDao().insertarDetalle(detalle);
+
+                    // C.2 DESCONTAR STOCK (¡Requisito de Rúbrica!)
+                    db.inventarioDao().actualizarStock(prod.getId(), 1);
+                }
+
+                manager.vaciarCarrito();
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "¡Venta Exitosa! Factura #" + idFacturaGenerado, Toast.LENGTH_LONG).show();
+                    adapter.notifyDataSetChanged();
+                    actualizarTotal();
+                    finish();
+                });
+
+            } catch (Exception e) {
+                runOnUiThread(() -> Toast.makeText(this, "Error en transacción: " + e.getMessage(), Toast.LENGTH_LONG)
+                        .show());
+            }
         });
     }
 
     private void actualizarTotal() {
         CarritoManager manager = CarritoManager.getInstance();
-
-        // 1. Cálculos
-        double totalPagar = manager.calcularTotalPagar(); // Precio Final con todo
-        double subtotalBase = manager.calcularSubtotalBase(); // Precio Base sin nada
-        double totalImpuestos = totalPagar - subtotalBase; // La diferencia son los impuestos
+        double totalPagar = manager.calcularTotalPagar();
+        double subtotalBase = manager.calcularSubtotalBase();
+        double totalImpuestos = totalPagar - subtotalBase;
         int cantidadItems = manager.getCarrito().size();
 
-        // 2. Mostrar en pantalla
-        txtSubtotal.setText(String.format("$%.2f", subtotalBase));
-        txtImpuestos.setText(String.format("$%.2f", totalImpuestos));
-        txtTotal.setText(String.format("$%.2f", totalPagar));
-
-        // Pluralización simple (1 producto vs 5 productos)
-        String textoCantidad = (cantidadItems == 1) ? "1 producto" : cantidadItems + " productos";
-        txtCantidad.setText(textoCantidad);
+        txtSubtotal.setText(String.format(Locale.US, "$%.2f", subtotalBase));
+        txtImpuestos.setText(String.format(Locale.US, "$%.2f", totalImpuestos));
+        txtTotal.setText(String.format(Locale.US, "$%.2f", totalPagar));
+        txtCantidad.setText(
+                String.format(Locale.US, "%d %s", cantidadItems, (cantidadItems == 1) ? "producto" : "productos"));
     }
 }
