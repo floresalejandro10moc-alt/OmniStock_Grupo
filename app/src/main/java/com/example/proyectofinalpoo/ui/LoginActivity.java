@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -17,6 +18,7 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText etUsuario, etClave;
     private Button btnIngresar;
+    private ImageView ivBigO;
     private SessionManager session;
 
     @Override
@@ -36,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
         etUsuario = findViewById(R.id.etUsuario);
         etClave = findViewById(R.id.etClave);
         btnIngresar = findViewById(R.id.btnIngresar);
+        ivBigO = findViewById(R.id.ivBigO);
         TextView tvRegistro = findViewById(R.id.tvIrARegistro);
 
         btnIngresar.setOnClickListener(v -> validarIngreso());
@@ -65,9 +68,19 @@ public class LoginActivity extends AppCompatActivity {
                     session.crearSesionLogin(
                             usuarioEncontrado.id_Usuario,
                             usuarioEncontrado.esAdministrador,
-                            usuarioEncontrado.alias
-                    );
-                    irAlMenuPrincipal();
+                            usuarioEncontrado.alias);
+
+                    // Animación de "Big O"
+                    if (ivBigO != null) {
+                        ivBigO.animate()
+                                .scaleX(50f)
+                                .scaleY(50f)
+                                .setDuration(800)
+                                .withEndAction(() -> irAlMenuPrincipal())
+                                .start();
+                    } else {
+                        irAlMenuPrincipal();
+                    }
                 } else {
                     Toast.makeText(this, "Credenciales incorrectas", Toast.LENGTH_SHORT).show();
                 }
