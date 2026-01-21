@@ -2,6 +2,7 @@ package com.example.proyectofinalpoo.model;
 
 
 import androidx.room.Entity;
+import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 import androidx.room.ColumnInfo;
 import androidx.room.Index;
@@ -37,6 +38,7 @@ public class Usuario {
 
     public Usuario() {}
 
+    @Ignore
     public Usuario(String alias, int esAdministrador, String clave, String correo) {
         this.alias = alias;
         this.esAdministrador = esAdministrador;

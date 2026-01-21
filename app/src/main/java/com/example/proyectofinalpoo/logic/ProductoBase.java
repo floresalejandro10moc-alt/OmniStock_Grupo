@@ -29,16 +29,6 @@ public abstract class ProductoBase {
     @ColumnInfo(name = "pro_EsTemporadaAnterior")
     public int esTemporadaAnterior;
 
-    @ColumnInfo(name = "pro_FechaCaducidad")
-    public String fechaCaducidad;
-
-    @ColumnInfo(name = "pro_Estado")
-    public String estado = "ACT";
-
-    // Constructor vacío para Room
-    public ProductoBase() {}
-
-    // Constructor para la lógica
     public ProductoBase(int id, String nombre, double precioBase, int stock, double ivaActual) {
         this.id = id;
         this.nombre = nombre;
@@ -49,9 +39,29 @@ public abstract class ProductoBase {
 
     public abstract double calcularPrecioFinal();
 
-    // Getters para el Mapper
-    public int getId() { return id; }
-    public String getNombre() { return nombre; }
-    public double getPrecioBase() { return precioBase; }
-    public int getStock() { return stock; }
+    public String getNombre() {
+        return nombre;
+    }
+
+    public double getPrecioBase() {
+        return precioBase;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    // Nuevo método abstracto para desglose de impuestos
+    public abstract java.util.Map<String, Double> calcularImpuestos();
+
+    // --- MANEJO DE CANTIDAD ---
+    protected int cantidadCarrito = 1;
+
+    public void setCantidadCarrito(int cantidadCarrito) {
+        this.cantidadCarrito = cantidadCarrito;
+    }
+
+    public int getCantidadCarrito() {
+        return cantidadCarrito;
+    }
 }

@@ -97,11 +97,8 @@ public class MainActivity extends AppCompatActivity {
 
         // E) Botón Nuevo Producto (Solo Admin)
         btnNuevoProd.setOnClickListener(v -> {
-            // Cuando crees la pantalla de AltaProductoActivity, descomenta abajo:
-            // Intent intent = new Intent(MainActivity.this, AltaProductoActivity.class);
-            // startActivity(intent);
-
-            Toast.makeText(this, "Próximamente: Crear Producto", Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
+            startActivity(intent);
         });
         // F) Botón Gestión de Categorías (Solo Admin)
         btnCategorias.setOnClickListener(v -> {
