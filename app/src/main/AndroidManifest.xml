@@ -41,6 +41,8 @@
         <activity
             android:name=".ui.DetalleFacturaActivity"
             android:exported="false" />
+        <activity android:name=".ui.CategoriaActivity"
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,10 +1,13 @@
 package com.example.proyectofinalpoo.data;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
+
 import com.example.proyectofinalpoo.model.*;
 import java.util.List;
 
@@ -98,4 +101,10 @@ public interface InventarioDao {
             "INNER JOIN PRODUCTOS p ON d.id_Producto = p.id_Producto " +
             "WHERE d.id_Factura = :idFactura")
     List<DetalleVisual> obtenerDetallesVisuales(long idFactura);
+    @Update
+    void actualizarCategoria(Categoria categoria);
+
+    @Delete
+    void eliminarCategoria(Categoria categoria);
+
 }
