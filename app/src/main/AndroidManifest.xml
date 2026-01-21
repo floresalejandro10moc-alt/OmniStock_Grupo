@@ -14,7 +14,10 @@
         tools:targetApi="31">
         <activity
             android:name=".ui.RegisterActivity"
-            android:exported="false" />
+        <activity
+            android:name=".ui.RegistroProductoActivity"
+            android:exported="false"
+            android:label="Nuevo Producto" />
         <activity
             android:name=".ui.CatalogoActivity"
             android:exported="false"

@@ -1,6 +1,8 @@
 package com.example.proyectofinalpoo.ui;
 
 import android.os.Bundle;
+import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,27 +36,38 @@ public class HistorialFacturasActivity extends AppCompatActivity {
 
     private void cargarFacturas() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
-            List<Factura> facturas = new ArrayList<>(); // Inicializar como lista vacía
             AppDatabase db = AppDatabase.getDatabase(this);
+            List<Factura> facturasAMostrar = new ArrayList<>();
 
             if (session.esAdmin()) {
-                // Si es admin, obtiene todas las facturas
-                facturas = db.inventarioDao().obtenerTodasLasFacturas();
+                // REGLA 1: El Admin ve absolutamente todo
+                facturasAMostrar = db.inventarioDao().obtenerTodasLasFacturas();
             } else {
-                // Si es cliente, primero buscamos su perfil para obtener la cédula
-                String alias = session.getAliasLogueado();
-                Cliente cliente = db.inventarioDao().obtenerClientePorAlias(alias);
-                if (cliente != null) {
-                    // Si encontramos el perfil, usamos la cédula para buscar sus facturas
-                    facturas = db.inventarioDao().obtenerFacturasPorCliente(cliente.cedula);
+                // REGLA 2: El Vendedor/Cliente solo ve lo suyo
+                // Intentamos obtener el perfil por ID (más seguro) o Alias según prefieras
+                int idUsuarioActual = session.getUserId();
+                Cliente perfil = db.inventarioDao().obtenerClientePorIdUsuario(idUsuarioActual);
+
+                // Validación robusta: que exista el perfil y tenga una cédula asociada
+                if (perfil != null && perfil.cedula != null) {
+                    // Usamos el método de búsqueda por cédula
+                    facturasAMostrar = db.inventarioDao().obtenerFacturasPorCedula(perfil.cedula);
                 }
-                // Si no hay perfil de cliente, la lista de facturas permanecerá vacía, lo cual es correcto.
             }
 
-            final List<Factura> facturasFinal = facturas;
+            // Variable final para el hilo de UI
+            final List<Factura> resultadoFinal = facturasAMostrar;
+
+            // Actualizar la interfaz en el hilo principal
             runOnUiThread(() -> {
-                adapter = new FacturaAdapter(facturasFinal);
+                // Seteamos el adaptador con la lista resultante (vacía o con datos)
+                adapter = new FacturaAdapter(resultadoFinal);
                 recyclerFacturas.setAdapter(adapter);
+
+                // Feedback al usuario si no hay datos
+                if (resultadoFinal.isEmpty()) {
+                    Toast.makeText(this, "No se encontraron facturas para mostrar", Toast.LENGTH_SHORT).show();
+                }
             });
         });
     }

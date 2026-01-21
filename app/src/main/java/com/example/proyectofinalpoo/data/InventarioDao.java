@@ -89,4 +89,11 @@ public interface InventarioDao {
     @Insert
     void insertarDetalleFactura(DetalleFactura detalleFactura);
 
+    @Query("SELECT * FROM CLIENTE WHERE id_Usuario = :idUsuario LIMIT 1")
+    Cliente obtenerClientePorIdUsuario(int idUsuario);
+
+    // Tu consulta de facturas actual (asegúrate de que use el nombre exacto de la columna)
+    @Query("SELECT * FROM FACTURAS WHERE fac_Cedula = :cedula ORDER BY id_Factura DESC")
+    List<Factura> obtenerFacturasPorCedula(String cedula);
+
 }
