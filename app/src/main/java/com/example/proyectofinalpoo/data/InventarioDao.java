@@ -99,6 +99,7 @@ public interface InventarioDao {
     // columna)
     @Query("SELECT * FROM FACTURAS WHERE fac_Cedula = :cedula ORDER BY id_Factura DESC")
     List<Factura> obtenerFacturasPorCedula(String cedula);
+
     @Insert
     void insertarCategoria(Categoria categoria);
 
@@ -108,5 +109,7 @@ public interface InventarioDao {
     @Delete
     void eliminarCategoria(Categoria categoria);
 
+    @Query("SELECT * FROM PRODUCTOS WHERE pro_Nombre LIKE '%' || :query || '%' ORDER BY pro_Nombre ASC")
+    List<Producto> buscarProductosPorNombre(String query);
 
 }

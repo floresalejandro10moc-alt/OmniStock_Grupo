@@ -77,6 +77,62 @@
         app:layout_constraintEnd_toStartOf="@id/btnHistorial"/>
 
     <!-- Product List Title -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/searchCard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginTop="16dp"
+        app:cardBackgroundColor="@color/glass_white_10"
+        app:cardCornerRadius="20dp"
+        app:cardElevation="0dp"
+        app:strokeColor="@color/glass_stroke"
+        app:strokeWidth="1dp"
+        app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:padding="12dp">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_search"
+                app:tint="@color/text_medium_emphasis"
+                android:layout_marginEnd="8dp"/>
+
+            <EditText
+                android:id="@+id/etBusqueda"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@null"
+                android:hint="Buscar productos..."
+                android:textColor="@color/text_high_emphasis"
+                android:textColorHint="@color/text_medium_emphasis"
+                android:inputType="text"
+                android:maxLines="1"
+                android:imeOptions="actionSearch"/>
+
+            <ImageButton
+                android:id="@+id/btnClearSearch"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_medium_emphasis"
+                android:visibility="gone"
+                android:contentDescription="Limpiar"/>
+
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+
     <TextView
         android:id="@+id/tvCatalogoTitle"
         android:layout_width="wrap_content"
@@ -87,8 +143,8 @@
         android:textColor="@color/text_high_emphasis"
         android:layout_marginStart="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvNombreUsuario"
-        android:layout_marginTop="24dp"/>
+        app:layout_constraintTop_toBottomOf="@id/searchCard"
+        android:layout_marginTop="16dp"/>
 
     <!-- Product RecyclerView -->
     <androidx.recyclerview.widget.RecyclerView

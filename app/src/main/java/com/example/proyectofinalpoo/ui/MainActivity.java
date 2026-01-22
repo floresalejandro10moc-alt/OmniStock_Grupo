@@ -34,6 +34,10 @@ public class MainActivity extends AppCompatActivity {
     SessionManager session;
     boolean isFabOpen = false;
 
+    // Search
+    android.widget.EditText etBusqueda;
+    ImageButton btnClearSearch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -68,6 +72,10 @@ public class MainActivity extends AppCompatActivity {
         btnCarrito = findViewById(R.id.btnIrAlCarrito);
         btnHistorial = findViewById(R.id.btnHistorial);
 
+        // Binding Search
+        etBusqueda = findViewById(R.id.etBusqueda);
+        btnClearSearch = findViewById(R.id.btnClearSearch);
+
         // FABs
         fabMain = findViewById(R.id.fabMain);
         fabAddProduct = findViewById(R.id.fabAddProduct);
@@ -82,7 +90,34 @@ public class MainActivity extends AppCompatActivity {
         String alias = session.getAliasLogueado();
         tvNombreUser.setText("¡Bienvenido,\n" + alias + "!");
 
-        cargarProductos();
+        // Carga inicial (Query vacío)
+        cargarProductos("");
+
+        // LOGIC SEARCH
+        etBusqueda.addTextChangedListener(new android.text.TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() > 0) {
+                    btnClearSearch.setVisibility(View.VISIBLE);
+                } else {
+                    btnClearSearch.setVisibility(View.GONE);
+                }
+                cargarProductos(s.toString());
+            }
+
+            @Override
+            public void afterTextChanged(android.text.Editable s) {
+            }
+        });
+
+        btnClearSearch.setOnClickListener(v -> {
+            etBusqueda.setText("");
+            cargarProductos("");
+        });
 
         // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
         if (!session.esAdmin()) {
@@ -146,10 +181,16 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private void cargarProductos() {
+    private void cargarProductos(String query) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            List<Producto> productos = db.inventarioDao().obtenerTodosProductos();
+            List<Producto> productos;
+            if (query == null || query.trim().isEmpty()) {
+                productos = db.inventarioDao().obtenerTodosProductos();
+            } else {
+                productos = db.inventarioDao().buscarProductosPorNombre(query);
+            }
+
             List<Categoria> categoriasList = db.inventarioDao().obtenerCategorias();
 
             Map<Integer, Categoria> categoriasMap = new HashMap<>();
@@ -169,7 +210,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cargarProductos(); // Recargar lista al volver
+        cargarProductos(""); // Recargar lista al volver
     }
 
     private void irAlLogin() {
