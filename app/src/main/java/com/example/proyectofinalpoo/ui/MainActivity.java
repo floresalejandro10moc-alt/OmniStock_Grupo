@@ -258,9 +258,10 @@ public class MainActivity extends AppCompatActivity {
                 categoriasMap.put(c.id_Categoria, c); // Public field
             }
 
+            List<Producto> finalProductos = productos;
             runOnUiThread(() -> {
                 boolean esAdmin = session.esAdmin();
-                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
+                adapter = new CatalogoAdapter(finalProductos, categoriasMap, esAdmin);
                 recyclerMain.setAdapter(adapter);
             });
         });
