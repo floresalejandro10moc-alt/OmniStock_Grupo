@@ -6,7 +6,19 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#FAFAFA">
+    android:background="@drawable/static_background">
+
+    <!-- Big O Decoration -->
+    <ImageView
+        android:id="@+id/ivBigO_cart"
+        android:layout_width="500dp"
+        android:layout_height="500dp"
+        android:layout_marginTop="-250dp"
+        android:layout_marginEnd="-250dp"
+        android:src="@drawable/bg_circle_o"
+        android:alpha="0.6"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <TextView
         android:id="@+id/tituloCarrito"
@@ -16,7 +28,7 @@
         tools:ignore="HardcodedText"
         android:textSize="26sp"
         android:textStyle="bold"
-        android:textColor="#212121"
+        android:textColor="@color/text_high_emphasis"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -26,7 +38,7 @@
         android:layout_height="wrap_content"
         tools:text="3 productos"
         android:textSize="14sp"
-        android:textColor="#757575"
+        android:textColor="@color/text_medium_emphasis"
         android:layout_marginTop="4dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tituloCarrito"/>
@@ -42,12 +54,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
 
-    <androidx.cardview.widget.CardView
+    <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardTotales"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="16dp"
-        app:cardElevation="8dp"
+        app:cardElevation="0dp"
+        app:cardBackgroundColor="@color/glass_white_10"
+        app:strokeColor="@color/glass_stroke"
+        app:strokeWidth="1dp"
         android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -55,8 +70,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="20dp"
-            android:background="#FFFFFF">
+            android:padding="20dp">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -68,13 +82,13 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Subtotal (Sin Imp.)"
-                    android:textColor="#757575"/>
+                    android:textColor="@color/text_medium_emphasis"/>
                 <TextView
                     android:id="@+id/txtSubtotal"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="$100.00"
-                    android:textColor="#212121"
+                    android:textColor="@color/text_high_emphasis"
                     android:textStyle="bold"/>
             </LinearLayout>
 
@@ -88,20 +102,20 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="Impuestos (IVA/Suntuario)"
-                    android:textColor="#757575"/>
+                    android:textColor="@color/text_medium_emphasis"/>
                 <TextView
                     android:id="@+id/txtImpuestos"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="$12.00"
-                    android:textColor="#212121"
+                    android:textColor="@color/text_high_emphasis"
                     android:textStyle="bold"/>
             </LinearLayout>
 
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
-                android:background="#EEEEEE"
+                android:background="@color/glass_stroke"
                 android:layout_marginBottom="12dp"/>
 
             <LinearLayout
@@ -116,7 +130,7 @@
                     android:text="TOTAL A PAGAR"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:textColor="#000000"/>
+                    android:textColor="@color/text_high_emphasis"/>
                 <TextView
                     android:id="@+id/txtTotalPagar"
                     android:layout_width="wrap_content"
@@ -124,7 +138,7 @@
                     tools:text="$112.00"
                     android:textSize="20sp"
                     android:textStyle="bold"
-                    android:textColor="#D32F2F"/>
+                    android:textColor="#FF8A80"/>
             </LinearLayout>
 
             <Button
@@ -132,23 +146,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="Finalizar Compra"
-                android:backgroundTint="#2196F3"
+                android:backgroundTint="@color/accent_primary"
+                android:textColor="@color/bg_main"
                 android:textAllCaps="false"
                 android:textSize="16sp"
-                app:cornerRadius="10dp"/>
+                app:cornerRadius="12dp"/>
 
             <Button
                 android:id="@+id/btnCancelar"
                 android:layout_width="match_parent"
                 android:layout_height="50dp"
                 android:text="Cancelar / Volver"
-                android:backgroundTint="#D32F2F"
-                android:textColor="#FFFFFF"
+                android:backgroundTint="@color/glass_white_10"
+                app:strokeColor="@color/glass_stroke"
+                app:strokeWidth="1dp"
+                android:textColor="@color/text_high_emphasis"
                 android:textAllCaps="false"
                 android:textSize="16sp"
                 android:layout_marginTop="8dp"
-                app:cornerRadius="10dp"/>
+                app:cornerRadius="12dp"/>
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
+    </com.google.android.material.card.MaterialCardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

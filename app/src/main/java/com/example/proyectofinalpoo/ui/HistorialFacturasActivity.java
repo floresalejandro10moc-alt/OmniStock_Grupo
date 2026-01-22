@@ -20,6 +20,7 @@ public class HistorialFacturasActivity extends AppCompatActivity {
     private RecyclerView recyclerFacturas;
     private FacturaAdapter adapter;
     private SessionManager session;
+    private android.widget.ImageButton btnVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,9 @@ public class HistorialFacturasActivity extends AppCompatActivity {
 
         recyclerFacturas = findViewById(R.id.recyclerFacturas);
         recyclerFacturas.setLayoutManager(new LinearLayoutManager(this));
+
+        btnVolver = findViewById(R.id.btnVolver);
+        btnVolver.setOnClickListener(v -> finish()); // Regresar a la pantalla anterior
 
         session = new SessionManager(this);
 
