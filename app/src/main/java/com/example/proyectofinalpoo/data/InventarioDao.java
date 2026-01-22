@@ -1,10 +1,13 @@
 package com.example.proyectofinalpoo.data;
 
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 import androidx.room.Transaction;
+import androidx.room.Update;
+
 import com.example.proyectofinalpoo.model.*;
 import java.util.List;
 
@@ -96,5 +99,14 @@ public interface InventarioDao {
     // columna)
     @Query("SELECT * FROM FACTURAS WHERE fac_Cedula = :cedula ORDER BY id_Factura DESC")
     List<Factura> obtenerFacturasPorCedula(String cedula);
+    @Insert
+    void insertarCategoria(Categoria categoria);
+
+    @Update
+    void actualizarCategoria(Categoria categoria);
+
+    @Delete
+    void eliminarCategoria(Categoria categoria);
+
 
 }

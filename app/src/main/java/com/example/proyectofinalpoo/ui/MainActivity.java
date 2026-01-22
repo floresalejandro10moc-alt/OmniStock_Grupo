@@ -11,10 +11,11 @@ import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.util.DataGenerator;
 import com.example.proyectofinalpoo.util.SessionManager;
 
+
 public class MainActivity extends AppCompatActivity {
 
     // Declaramos todos los botones de la interfaz
-    Button btnCerrar, btnCarrito, btnHistorial, btnCatalogo, btnNuevoProd;
+    Button btnCerrar, btnCarrito, btnHistorial, btnCatalogo, btnNuevoProd, btnCategorias;
     TextView tvNombreUser;
     SessionManager session;
 
@@ -35,6 +36,8 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "Base de datos inicializada", Toast.LENGTH_SHORT).show();
         }
         // ----------------------------
+        // Dentro del onCreate de MainActivity.java
+
 
         // 1. Inicializar SessionManager
         session = new SessionManager(this);
@@ -50,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         btnCerrar = findViewById(R.id.btnCerrarSesion);
         btnCarrito = findViewById(R.id.btnIrAlCarrito);
         btnHistorial = findViewById(R.id.btnHistorial);
+        btnCategorias = findViewById(R.id.btnGestionCategorias);
 
         // Estos IDs deben coincidir con tu activity_main.xml
         btnCatalogo = findViewById(R.id.btnIrAlInventario);
@@ -62,6 +66,7 @@ public class MainActivity extends AppCompatActivity {
         // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
         if (!session.esAdmin()) {
             btnNuevoProd.setVisibility(View.GONE);
+            btnCategorias.setVisibility(View.GONE); // Solo el admin podrá verlo
         }
 
         // --- LISTENERS (ACCIONES DE LOS BOTONES) ---
@@ -93,6 +98,11 @@ public class MainActivity extends AppCompatActivity {
         // E) Botón Nuevo Producto (Solo Admin)
         btnNuevoProd.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
+            startActivity(intent);
+        });
+        // F) Botón Gestión de Categorías (Solo Admin)
+        btnCategorias.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, CategoriaActivity.class);
             startActivity(intent);
         });
     }

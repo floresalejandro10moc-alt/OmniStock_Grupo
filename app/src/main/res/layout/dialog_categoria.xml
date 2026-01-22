@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Datos de Categoría"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="20dp"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/etNombreCat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Nombre"
+        android:autofillHints="name"
+        android:inputType="textCapSentences"
+        android:layout_marginBottom="12dp"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/etDescCat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Descripción"
+        android:autofillHints="none"
+        android:inputType="text"
+        android:layout_marginBottom="12dp"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/etIvaCat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="IVA (Ej: 0.15)"
+        android:autofillHints="none"
+        android:inputType="numberDecimal"
+        android:layout_marginBottom="12dp"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/etImpuestoCat"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Impuesto (Ej: 0.05)"
+        android:autofillHints="none"
+        android:inputType="numberDecimal"
+        tools:ignore="HardcodedText" />
+
+</LinearLayout>
