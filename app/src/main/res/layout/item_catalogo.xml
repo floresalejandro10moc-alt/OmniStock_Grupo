@@ -18,15 +18,27 @@
         android:padding="16dp"
         android:gravity="center_horizontal">
 
+        <ImageView
+            android:id="@+id/imgItemCatalogoIcon"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_marginBottom="12dp"
+            android:src="@drawable/caja_omni"
+            android:scaleType="fitCenter"
+            android:background="@drawable/circle_glass"
+            android:padding="12dp"/>
+
         <TextView
             android:id="@+id/txtItemCatalogoNombre"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="20sp"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:textColor="@color/text_high_emphasis"
             android:text="Producto"
             android:gravity="center"
+            android:maxLines="2"
+            android:ellipsize="end"
             android:layout_marginBottom="8dp"/>
 
         <TextView
@@ -34,8 +46,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="$0.00"
-            android:textColor="@color/text_high_emphasis"
-            android:textSize="18sp"
+            android:textColor="@color/accent_primary"
+            android:textStyle="bold"
+            android:textSize="16sp"
             android:layout_marginBottom="4dp"/>
 
         <TextView
@@ -44,7 +57,7 @@
             android:layout_height="wrap_content"
             android:text="Stock: 0"
             android:textColor="@color/text_medium_emphasis"
-            android:textSize="14sp"
+            android:textSize="12sp"
             android:layout_marginBottom="12dp"/>
 
         <Button

@@ -53,6 +53,7 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
 
     class CatalogoViewHolder extends RecyclerView.ViewHolder {
         private TextView txtNombre, txtPrecio, txtStock;
+        private android.widget.ImageView imgIcon; // Added ImageView
         private Button btnAgregar;
 
         public CatalogoViewHolder(@NonNull View itemView) {
@@ -60,6 +61,7 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
             txtNombre = itemView.findViewById(R.id.txtItemCatalogoNombre);
             txtPrecio = itemView.findViewById(R.id.txtItemCatalogoPrecio);
             txtStock = itemView.findViewById(R.id.txtItemCatalogoStock);
+            imgIcon = itemView.findViewById(R.id.imgItemCatalogoIcon); // Bind view
             btnAgregar = itemView.findViewById(R.id.btnItemCatalogoAgregar);
         }
 
@@ -67,6 +69,22 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
             txtNombre.setText(p.nombre);
             txtPrecio.setText(String.format("$%.2f", p.precioBase));
             txtStock.setText("Stock: " + p.stock);
+
+            // Dynamic Icon Logic
+            if (c != null && c.nombre != null) {
+                String catName = c.nombre.toLowerCase();
+                if (catName.contains("electr") || catName.contains("tecnolog")) {
+                    imgIcon.setImageResource(R.drawable.ic_tech);
+                } else if (catName.contains("ropa") || catName.contains("vesti")) {
+                    imgIcon.setImageResource(R.drawable.ic_clothing);
+                } else if (catName.contains("alim") || catName.contains("comida") || catName.contains("bebida")) {
+                    imgIcon.setImageResource(R.drawable.ic_food);
+                } else {
+                    imgIcon.setImageResource(R.drawable.caja_omni);
+                }
+            } else {
+                imgIcon.setImageResource(R.drawable.caja_omni);
+            }
 
             // Si NO es admin, ocultamos el stock
             if (!esAdmin) {

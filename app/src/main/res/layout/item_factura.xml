@@ -1,32 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="16dp"
-    android:layout_marginBottom="8dp"
-    android:background="@android:drawable/list_selector_background">
+    android:layout_margin="8dp"
+    app:cardBackgroundColor="@color/glass_white_10"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/glass_stroke"
+    app:strokeWidth="1dp"
+    android:clickable="true"
+    android:focusable="true"
+    app:rippleColor="#40FFFFFF">
 
-    <TextView
-        android:id="@+id/txtNumeroFactura"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Factura #123"
-        android:textSize="18sp"
-        android:textStyle="bold" />
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <TextView
-        android:id="@+id/txtFechaFactura"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Fecha: 01/01/2024" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="8dp">
 
-    <TextView
-        android:id="@+id/txtTotalFactura"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Total: $100.00"
-        android:textSize="16sp"
-        android:textStyle="italic" />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_history"
+                app:tint="@color/text_high_emphasis"
+                android:layout_marginEnd="12dp"/>
 
-</LinearLayout>
+            <TextView
+                android:id="@+id/txtNumeroFactura"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Factura #123"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_high_emphasis"/>
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/glass_stroke"
+            android:layout_marginBottom="12dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Fecha:"
+                android:textColor="@color/text_medium_emphasis"/>
+
+            <TextView
+                android:id="@+id/txtFechaFactura"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="01/01/2024"
+                android:textColor="@color/text_high_emphasis"
+                android:textStyle="bold"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Total:"
+                android:textColor="@color/text_medium_emphasis"/>
+
+            <TextView
+                android:id="@+id/txtTotalFactura"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="$100.00"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/accent_primary"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>
