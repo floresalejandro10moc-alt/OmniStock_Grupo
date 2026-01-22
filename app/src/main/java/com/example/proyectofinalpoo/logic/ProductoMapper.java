@@ -11,8 +11,8 @@ public class ProductoMapper {
             return null;
         }
 
-        double ivaDeLaBD = entidadCategoria.iva;
-        double impuestoExtra = entidadCategoria.impuesto;
+        double ivaDeLaBD = entidadCategoria.iva / 100.0;
+        double impuestoExtra = entidadCategoria.impuesto / 100.0;
         String tipo = (entidadCategoria.nombre != null) ? entidadCategoria.nombre.toUpperCase() : "";
 
         // CASO 1: ELECTRONICOS
@@ -23,8 +23,7 @@ public class ProductoMapper {
                     entidadProducto.precioBase,
                     entidadProducto.stock,
                     ivaDeLaBD,
-                    impuestoExtra
-            );
+                    impuestoExtra);
         }
         // CASO 2: ROPA
         else if (tipo.contains("ROPA") || tipo.contains("VESTIMENTA") || tipo.contains("TEXTIL")) {
@@ -35,8 +34,7 @@ public class ProductoMapper {
                     entidadProducto.precioBase,
                     entidadProducto.stock,
                     ivaDeLaBD,
-                    esViejo
-            );
+                    esViejo);
         }
         // CASO 3: ALIMENTOS
         else if (tipo.contains("ALIMENTO") || tipo.contains("COMIDA") || tipo.contains("FRUTA")) {
@@ -44,11 +42,11 @@ public class ProductoMapper {
                     entidadProducto.id_Producto, // <--- IMPORTANTE: EL ID
                     entidadProducto.nombre,
                     entidadProducto.precioBase,
-                    entidadProducto.stock
-            );
+                    entidadProducto.stock);
         }
 
         // CASO 4: DEFECTO
-        return new Electronico(entidadProducto.id_Producto, entidadProducto.nombre, entidadProducto.precioBase, entidadProducto.stock, ivaDeLaBD, 0);
+        return new Electronico(entidadProducto.id_Producto, entidadProducto.nombre, entidadProducto.precioBase,
+                entidadProducto.stock, ivaDeLaBD, 0);
     }
 }
