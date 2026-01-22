@@ -11,125 +11,124 @@
         android:layout_width="600dp"
         android:layout_height="600dp"
         android:layout_marginStart="-300dp"
-        android:layout_marginTop="-100dp"
+        android:layout_marginTop="-200dp"
         android:src="@drawable/bg_circle_o"
         android:alpha="0.8"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ScrollView
+    <!-- Header: Welcome + Logout -->
+    <LinearLayout
+        android:id="@+id/headerLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:fillViewport="true">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="24dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <LinearLayout
-            android:layout_width="match_parent"
+        <TextView
+            android:id="@+id/tvNombreUsuario"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:gravity="center_horizontal">
+            android:layout_weight="1"
+            android:text="Bienvenido"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_high_emphasis"/>
 
-            <TextView
-                android:id="@+id/tvNombreUsuario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="Bienvenido al Sistema"
-                android:textSize="26sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_high_emphasis"
-                android:gravity="center"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="40dp"/>
+        <ImageButton
+            android:id="@+id/btnCerrarSesion"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/ic_logout"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Logout"
+            app:tint="@color/text_high_emphasis"/>
+    </LinearLayout>
 
-            <Button
-                android:id="@+id/btnIrAlInventario"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:text="📦 CATÁLOGO DE PRODUCTOS"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_high_emphasis"
-                android:backgroundTint="@color/glass_white_10"
-                app:strokeColor="@color/glass_stroke"
-                app:strokeWidth="1dp"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="16dp"
-                android:elevation="0dp"/>
+    <!-- Navigation Icon Bar -->
+    <LinearLayout
+        android:id="@+id/navBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:paddingBottom="16dp"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout">
 
-            <Button
-                android:id="@+id/btnAgregarProducto"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:text="➕ REGISTRAR NUEVO PRODUCTO"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_high_emphasis"
-                android:backgroundTint="@color/glass_white_10"
-                app:strokeColor="@color/glass_stroke"
-                app:strokeWidth="1dp"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="16dp"
-                android:elevation="0dp"/>
+        <ImageButton
+            android:id="@+id/btnIrAlCarrito"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_cart"
+            android:background="@drawable/bg_circle_o"
+            android:backgroundTint="@color/glass_white_10"
+            android:layout_marginEnd="16dp"
+            app:tint="#FFFFFF"
+            android:padding="12dp"
+            android:scaleType="fitCenter"/>
 
-            <Button
-                android:id="@+id/btnIrAlCarrito"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:text="🛒 MI CARRITO DE COMPRAS"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_high_emphasis"
-                android:backgroundTint="@color/glass_white_10"
-                app:strokeColor="@color/glass_stroke"
-                app:strokeWidth="1dp"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="16dp"
-                android:elevation="0dp"/>
+        <ImageButton
+            android:id="@+id/btnHistorial"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_history"
+            android:background="@drawable/bg_circle_o"
+            android:backgroundTint="@color/glass_white_10"
+            android:layout_marginEnd="16dp"
+            app:tint="#FFFFFF"
+            android:padding="12dp"
+            android:scaleType="fitCenter"/>
 
-            <Button
-                android:id="@+id/btnHistorial"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:text="🧾 HISTORIAL DE FACTURAS"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_high_emphasis"
-                android:backgroundTint="@color/glass_white_10"
-                app:strokeColor="@color/glass_stroke"
-                app:strokeWidth="1dp"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="40dp"
-                android:elevation="0dp"/>
+        <!-- Admin Icons -->
+        <ImageButton
+            android:id="@+id/btnAgregarProducto"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_add"
+            android:background="@drawable/bg_circle_o"
+            android:backgroundTint="@color/glass_white_10"
+            android:layout_marginEnd="16dp"
+            app:tint="#FFFFFF"
+            android:padding="12dp"
+            android:scaleType="fitCenter"/>
 
-            <Button
-                android:id="@+id/btnGestionCategorias"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:text="📂 GESTIÓN DE CATEGORÍAS"
-                android:textSize="14sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_high_emphasis"
-                android:backgroundTint="@color/glass_white_10"
-                app:strokeColor="@color/glass_stroke"
-                app:strokeWidth="1dp"
-                app:cornerRadius="16dp"
-                android:layout_marginBottom="16dp"
-                android:elevation="0dp"/>
+        <ImageButton
+            android:id="@+id/btnGestionCategorias"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_category"
+            android:background="@drawable/bg_circle_o"
+            android:backgroundTint="@color/glass_white_10"
+            app:tint="#FFFFFF"
+            android:padding="12dp"
+            android:scaleType="fitCenter"/>
 
-            <Button
-                android:id="@+id/btnCerrarSesion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="CERRAR SESIÓN"
-                android:textStyle="bold"
-                android:padding="15dp"
-                android:textColor="#FF8A80"
-                android:backgroundTint="@color/glass_white_10"
-                app:strokeColor="#FF8A80"
-                app:strokeWidth="1dp"
-                app:cornerRadius="16dp"
-                android:elevation="0dp"/>
+    </LinearLayout>
 
-        </LinearLayout>
-    </ScrollView>
+    <!-- Product List Title -->
+    <TextView
+        android:id="@+id/tvCatalogoTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Catálogo de Productos"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:textColor="@color/text_high_emphasis"
+        android:layout_marginStart="24dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/navBar"
+        android:layout_marginTop="8dp"/>
+
+    <!-- Product RecyclerView -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerMain"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:padding="16dp"
+        android:clipToPadding="false"
+        app:layout_constraintTop_toBottomOf="@id/tvCatalogoTitle"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
