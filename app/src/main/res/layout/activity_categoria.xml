@@ -6,26 +6,57 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:padding="16dp"
-    android:background="#FAFAFA">
+    android:background="@drawable/static_background">
 
-    <TextView
-        android:id="@+id/lblTituloCat"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Gestión de Categorías"
-        tools:ignore="HardcodedText"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#212121"
+    <!-- Big O Decoration -->
+    <ImageView
+        android:id="@+id/ivBigO_cat"
+        android:layout_width="400dp"
+        android:layout_height="400dp"
+        android:layout_marginStart="-200dp"
+        android:layout_marginTop="-200dp"
+        android:src="@drawable/bg_circle_o"
+        android:alpha="0.4"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/headerContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:paddingBottom="16dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btnVolver"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@android:drawable/ic_menu_revert"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            app:tint="@color/text_high_emphasis"
+            android:contentDescription="Volver"
+            android:scaleType="centerInside"
+            android:rotation="180"/> 
+
+        <TextView
+            android:id="@+id/lblTituloCat"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Gestión de Categorías"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_high_emphasis"
+            android:layout_marginStart="16dp"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCategorias"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toBottomOf="@id/lblTituloCat"
+        app:layout_constraintTop_toBottomOf="@id/headerContainer"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"/>
@@ -37,7 +68,7 @@
         android:layout_margin="16dp"
         android:contentDescription="Agregar"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#1565C0"
+        app:backgroundTint="@color/accent_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:tint="#FFFFFF"/>

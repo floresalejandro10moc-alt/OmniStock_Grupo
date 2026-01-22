@@ -24,10 +24,12 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
 
     private List<Producto> productos;
     private Map<Integer, Categoria> categorias;
+    private boolean esAdmin;
 
-    public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias) {
+    public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias, boolean esAdmin) {
         this.productos = productos;
         this.categorias = categorias;
+        this.esAdmin = esAdmin;
     }
 
     @NonNull
@@ -65,6 +67,13 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
             txtNombre.setText(p.nombre);
             txtPrecio.setText(String.format("$%.2f", p.precioBase));
             txtStock.setText("Stock: " + p.stock);
+
+            // Si NO es admin, ocultamos el stock
+            if (!esAdmin) {
+                txtStock.setVisibility(View.GONE);
+            } else {
+                txtStock.setVisibility(View.VISIBLE);
+            }
 
             btnAgregar.setOnClickListener(v -> {
                 if (p.stock > 0) {

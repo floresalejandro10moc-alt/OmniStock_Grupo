@@ -25,6 +25,7 @@ public class CategoriaActivity extends AppCompatActivity {
     private List<Categoria> listaCategorias = new ArrayList<>();
     private AppDatabase db;
     private FloatingActionButton fabAdd;
+    private android.widget.ImageButton btnVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,9 @@ public class CategoriaActivity extends AppCompatActivity {
         db = AppDatabase.getDatabase(this);
         rvCategorias = findViewById(R.id.rvCategorias);
         fabAdd = findViewById(R.id.fabAddCategoria);
+        btnVolver = findViewById(R.id.btnVolver);
+
+        btnVolver.setOnClickListener(v -> finish()); // Regresar a Main
 
         rvCategorias.setLayoutManager(new LinearLayoutManager(this));
 

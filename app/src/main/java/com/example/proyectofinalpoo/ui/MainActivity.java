@@ -74,11 +74,11 @@ public class MainActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.recyclerMain);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Use Grid with 2 columns
 
-        cargarProductos();
-
-        // 4. Mostrar nombre del usuario en la cabecera
+        // 4. Mostrar nombre del usuario en la cabecera (Dos líneas)
         String alias = session.getAliasLogueado();
-        tvNombreUser.setText("¡Bienvenido, " + alias + "!");
+        tvNombreUser.setText("¡Bienvenido,\n" + alias + "!");
+
+        cargarProductos();
 
         // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
         if (!session.esAdmin()) {
@@ -135,7 +135,9 @@ public class MainActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                adapter = new CatalogoAdapter(productos, categoriasMap);
+                // Pasamos si es ADMIN para mostrar/ocultar stock
+                boolean esAdmin = session.esAdmin();
+                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
                 recyclerView.setAdapter(adapter);
             });
         });
