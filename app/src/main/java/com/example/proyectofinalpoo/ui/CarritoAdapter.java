@@ -67,8 +67,12 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
         holder.txtCantidad.setText(String.valueOf(producto.getCantidadCarrito()));
 
         // Botón MÁS
+        // Botón MÁS
         holder.btnMas.setOnClickListener(v -> {
-            if (producto.getCantidadCarrito() < (producto.stock - 1)) {
+            // CAMBIO: Se permite agregar hasta completar el stock (<= stock)
+            // Si tiene 19 y stock es 20, entra (19 < 20) -> sube a 20.
+            // Si tiene 20 y stock es 20, no entra (20 < 20 es false).
+            if (producto.getCantidadCarrito() < producto.stock) {
                 com.example.proyectofinalpoo.logic.CarritoManager.getInstance().aumentarCantidad(position);
                 notifyItemChanged(position); // Solo actualizamos este item
                 if (onCartUpdate != null) {
@@ -76,7 +80,7 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
                 }
             } else {
                 android.widget.Toast.makeText(holder.itemView.getContext(),
-                        "Stock máximo alcanzado (se requiere dejar 1 en inventario)",
+                        "No puedes agregar más de lo disponible en stock (" + producto.stock + ")",
                         android.widget.Toast.LENGTH_SHORT).show();
             }
         });
