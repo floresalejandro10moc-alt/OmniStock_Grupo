@@ -1,5 +1,5 @@
 <resources>
-    <string name="login_title">OmniStock Login</string>
+    <string name="login_title">Login</string>
     <string name="app_name">OmniStock</string>
     <string name="hint_username">Usuario / Alias</string>
     <string name="hint_password">Contraseña</string>

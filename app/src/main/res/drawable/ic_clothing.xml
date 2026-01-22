@@ -1,0 +1,14 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="24dp"
+    android:height="24dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24"
+    android:tint="#E91E63">
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M12,2c-4,0 -8,4 -8,4v1h16V6C20,6 16,2 12,2zM6,9v11h12V9H6z"/>
+  <!-- Alternative simpler path for a shirt -->
+  <path
+      android:fillColor="@android:color/white"
+      android:pathData="M12,1L6,5l2,1l1,-2h6l1,2l2,-1L12,1zM4,6v16h16V6h-2v12H6V6H4z"/>
+</vector>

@@ -48,28 +48,40 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
 
         // 3. CAMBIO VISUAL DINÁMICO (Requisito Rúbrica)
         // Cambiamos el color de fondo de la tarjeta según el tipo de clase
+        // USAREMOS COLORES CON ALPHA (VIDRIO TINTADO) PARA MANTENER LA ESTÉTICA DARK
         if (producto instanceof Electronico) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#E3F2FD")); // Azulito
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#262196F3")); // Azul Vidrio
             holder.txtDetalle.setText("Incluye IVA + Suntuario");
         } else if (producto instanceof Ropa) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FCE4EC")); // Rosadito
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#26E91E63")); // Rosa Vidrio
             holder.txtDetalle.setText("Incluye IVA (Posible Descuento)");
         } else if (producto instanceof Alimento) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#E8F5E9")); // Verdesito
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#264CAF50")); // Verde Vidrio
             holder.txtDetalle.setText("0% IVA");
+        } else {
+            // Default Glass
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#1AFFFFFF"));
         }
 
         // 4. Configurar cantidad y botones
         holder.txtCantidad.setText(String.valueOf(producto.getCantidadCarrito()));
 
         // Botón MÁS
+        // Botón MÁS
         holder.btnMas.setOnClickListener(v -> {
-            com.example.proyectofinalpoo.logic.CarritoManager.getInstance().aumentarCantidad(position);
-            notifyItemChanged(position); // Solo actualizamos este item
-            // notifyItemRangeChanged no es necesario si solo cambia el contenido visual de
-            // uno
-            if (onCartUpdate != null) {
-                onCartUpdate.run();
+            // CAMBIO: Se permite agregar hasta completar el stock (<= stock)
+            // Si tiene 19 y stock es 20, entra (19 < 20) -> sube a 20.
+            // Si tiene 20 y stock es 20, no entra (20 < 20 es false).
+            if (producto.getCantidadCarrito() < producto.stock) {
+                com.example.proyectofinalpoo.logic.CarritoManager.getInstance().aumentarCantidad(position);
+                notifyItemChanged(position); // Solo actualizamos este item
+                if (onCartUpdate != null) {
+                    onCartUpdate.run();
+                }
+            } else {
+                android.widget.Toast.makeText(holder.itemView.getContext(),
+                        "No puedes agregar más de lo disponible en stock (" + producto.stock + ")",
+                        android.widget.Toast.LENGTH_SHORT).show();
             }
         });
 

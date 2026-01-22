@@ -12,6 +12,7 @@ import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.data.AppDatabase;
 import com.example.proyectofinalpoo.model.Categoria;
 import com.example.proyectofinalpoo.model.Producto;
+import com.example.proyectofinalpoo.util.SessionManager;
 
 import java.util.HashMap;
 import java.util.List;
@@ -22,6 +23,7 @@ public class CatalogoActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private CatalogoAdapter adapter;
     private Button btnIrAlCarrito;
+    private SessionManager session;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +32,7 @@ public class CatalogoActivity extends AppCompatActivity {
 
         recyclerView = findViewById(R.id.recyclerCatalogo);
         btnIrAlCarrito = findViewById(R.id.btnIrAlCarritoDesdeCatalogo);
+        session = new SessionManager(this);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -53,7 +56,8 @@ public class CatalogoActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                adapter = new CatalogoAdapter(productos, categoriasMap);
+                boolean esAdmin = session.esAdmin();
+                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
                 recyclerView.setAdapter(adapter);
             });
         });

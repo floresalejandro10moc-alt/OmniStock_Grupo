@@ -29,6 +29,7 @@ public class RegistroProductoActivity extends AppCompatActivity {
     private Spinner spinnerCategoria;
     private CheckBox cbTemporadaAnterior;
     private Button btnGuardar, btnCancelar;
+    private android.widget.ImageButton btnVolver;
 
     // Mapa para saber el ID de categoría según la posición del Spinner
     // O simplemente una lista paralela
@@ -50,6 +51,7 @@ public class RegistroProductoActivity extends AppCompatActivity {
         cbTemporadaAnterior = findViewById(R.id.cbTemporadaAnterior);
         btnGuardar = findViewById(R.id.btnGuardarProducto);
         btnCancelar = findViewById(R.id.btnCancelarRegistro);
+        btnVolver = findViewById(R.id.btnVolver);
 
         // 2. Cargar Categorías
         cargarCategorias();
@@ -76,6 +78,8 @@ public class RegistroProductoActivity extends AppCompatActivity {
 
         // 5. Botón Cancelar
         btnCancelar.setOnClickListener(v -> finish());
+        btnVolver.setOnClickListener(v -> finish()); // Regresar a Main
+        btnVolver.setOnClickListener(v -> finish()); // Regresar a Main
 
         // 6. Listener para Fecha
         etFechaCaducidad.setOnClickListener(v -> mostrarDatePicker());

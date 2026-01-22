@@ -21,12 +21,15 @@ public class DetalleFacturaActivity extends AppCompatActivity {
     private TextView txtSubtotal, txtIva15, txtIva12, txtImpSantuario, txtTotal;
     private RecyclerView recyclerProductos;
     private DetalleProductoAdapter adapter;
+    private android.widget.ImageButton btnVolver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detalle_factura);
         vincularVistas();
+
+        btnVolver.setOnClickListener(v -> finish()); // Regresar
 
         long facturaId = getIntent().getLongExtra("FACTURA_ID", -1);
 
@@ -53,13 +56,15 @@ public class DetalleFacturaActivity extends AppCompatActivity {
         txtTotal = findViewById(R.id.txtDetalleFacturaTotal);
         recyclerProductos = findViewById(R.id.recyclerDetalleProductos);
         recyclerProductos.setLayoutManager(new LinearLayoutManager(this));
+        btnVolver = findViewById(R.id.btnVolver);
     }
 
     private void cargarDetalles(long facturaId) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
             Factura factura = db.inventarioDao().obtenerFacturaPorId(facturaId);
-            List<DetalleParaLogica> detallesCompletos = db.inventarioDao().obtenerDetallesCompletosParaLogica(facturaId);
+            List<DetalleParaLogica> detallesCompletos = db.inventarioDao()
+                    .obtenerDetallesCompletosParaLogica(facturaId);
 
             runOnUiThread(() -> {
                 if (factura == null || detallesCompletos == null) {

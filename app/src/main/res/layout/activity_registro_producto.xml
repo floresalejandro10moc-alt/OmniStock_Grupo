@@ -2,6 +2,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/static_background"
     android:padding="16dp">
 
     <LinearLayout
@@ -9,122 +10,195 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Registrar Nuevo Producto"
-            android:textSize="24sp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:layout_marginBottom="24dp"/>
-
-        <!-- Nombre -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Nombre del Producto"
-            android:layout_marginBottom="12dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etNombre"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="textCapWords" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Descripción -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Descripción (Max 50 caracteres)"
-            android:layout_marginBottom="12dp"
-            app:counterEnabled="true"
-            app:counterMaxLength="50">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etDescripcion"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:maxLength="50"
-                android:inputType="textCapSentences" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Precio -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Precio Base ($)"
-            android:layout_marginBottom="12dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etPrecio"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="numberDecimal" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Stock -->
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Stock Inicial"
-            android:layout_marginBottom="12dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/etStock"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="number" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Categoría -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Categoría"
-            android:textSize="16sp"
-            android:layout_marginBottom="8dp"/>
-
-        <Spinner
-            android:id="@+id/spinnerCategoria"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="48dp"
-            android:layout_marginBottom="16dp"
-            android:background="@android:drawable/btn_dropdown"/>
-
-        <!-- Contenedor Dinámico -->
+        <!-- Header -->
         <LinearLayout
-            android:id="@+id/layoutDinamico"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+
+            <ImageButton
+                android:id="@+id/btnVolver"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@android:drawable/ic_menu_revert"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:contentDescription="Volver"
+                android:scaleType="centerInside"
+                android:rotation="180"/> 
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Registrar Nuevo Producto"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:textColor="@color/text_high_emphasis"
+                android:layout_marginStart="16dp"/>
+        </LinearLayout>
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginBottom="24dp">
-            
-            <!-- Checkbox Temporada Anterior (Ropa) -->
-            <CheckBox
-                android:id="@+id/cbTemporadaAnterior"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="¿Es de Temporada Anterior?"
-                android:visibility="gone"/>
+            android:padding="16dp"
+            android:background="@drawable/bg_circle_o"
+            android:backgroundTint="@color/glass_white_10">
 
-            <!-- Fecha Caducidad (Alimento) -->
+            <!-- Nombre -->
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/layoutFechaCaducidad"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Fecha de Caducidad (dd/MM/yyyy)"
-                android:visibility="gone">
+                android:hint="Nombre del Producto"
+                android:textColorHint="@color/text_medium_emphasis"
+                app:boxBackgroundColor="@color/glass_white_10"
+                app:boxStrokeWidth="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="12dp">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:id="@+id/etFechaCaducidad"
+                    android:id="@+id/etNombre"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:inputType="none"
-                    android:focusable="false"
-                    android:clickable="true" />
+                    android:textColor="@color/text_high_emphasis"
+                    android:inputType="textCapWords" />
             </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Descripción -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Descripción (Max 50 caracteres)"
+                android:textColorHint="@color/text_medium_emphasis"
+                app:boxBackgroundColor="@color/glass_white_10"
+                app:boxStrokeWidth="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="12dp"
+                app:counterEnabled="true"
+                app:counterMaxLength="50"
+                app:counterTextColor="@color/text_medium_emphasis">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etDescripcion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:maxLength="50"
+                    android:textColor="@color/text_high_emphasis"
+                    android:inputType="textCapSentences" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Precio -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Precio Base ($)"
+                android:textColorHint="@color/text_medium_emphasis"
+                app:boxBackgroundColor="@color/glass_white_10"
+                app:boxStrokeWidth="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etPrecio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_high_emphasis"
+                    android:inputType="numberDecimal" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Stock -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Stock Inicial"
+                android:textColorHint="@color/text_medium_emphasis"
+                app:boxBackgroundColor="@color/glass_white_10"
+                app:boxStrokeWidth="0dp"
+                app:boxCornerRadiusTopStart="12dp"
+                app:boxCornerRadiusTopEnd="12dp"
+                app:boxCornerRadiusBottomStart="12dp"
+                app:boxCornerRadiusBottomEnd="12dp"
+                android:layout_marginBottom="12dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/etStock"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/text_high_emphasis"
+                    android:inputType="number" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Categoría -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Categoría"
+                android:textSize="16sp"
+                android:textColor="@color/text_high_emphasis"
+                android:layout_marginBottom="8dp"/>
+
+            <Spinner
+                android:id="@+id/spinnerCategoria"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginBottom="16dp"
+                android:backgroundTint="@color/text_high_emphasis"/>
+
+            <!-- Contenedor Dinámico -->
+            <LinearLayout
+                android:id="@+id/layoutDinamico"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="24dp">
+                
+                <!-- Checkbox Temporada Anterior (Ropa) -->
+                <CheckBox
+                    android:id="@+id/cbTemporadaAnterior"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="¿Es de Temporada Anterior?"
+                    android:textColor="@color/text_high_emphasis"
+                    android:buttonTint="@color/accent_primary"
+                    android:visibility="gone"/>
+
+                <!-- Fecha Caducidad (Alimento) -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutFechaCaducidad"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha de Caducidad (dd/MM/yyyy)"
+                    android:textColorHint="@color/text_medium_emphasis"
+                    app:boxBackgroundColor="@color/glass_white_10"
+                    app:boxStrokeWidth="0dp"
+                    app:boxCornerRadiusTopStart="12dp"
+                    app:boxCornerRadiusTopEnd="12dp"
+                    app:boxCornerRadiusBottomStart="12dp"
+                    app:boxCornerRadiusBottomEnd="12dp"
+                    android:visibility="gone">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etFechaCaducidad"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textColor="@color/text_high_emphasis"
+                        android:focusable="false"
+                        android:clickable="true" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
 
         </LinearLayout>
 
@@ -133,15 +207,22 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Guardar Producto"
-            android:backgroundTint="#2E7D32"
-            android:layout_marginBottom="8dp"/>
+            android:backgroundTint="@color/accent_primary"
+            android:textColor="@color/bg_main"
+            android:layout_marginTop="24dp"
+            android:layout_marginBottom="8dp"
+            app:cornerRadius="12dp"/>
 
         <Button
             android:id="@+id/btnCancelarRegistro"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Cancelar"
-            android:backgroundTint="#D32F2F"/>
+            android:backgroundTint="@color/glass_white_10"
+            app:strokeColor="@color/glass_stroke"
+            app:strokeWidth="1dp"
+            android:textColor="@color/text_high_emphasis"
+            app:cornerRadius="12dp"/>
 
     </LinearLayout>
 </ScrollView>
