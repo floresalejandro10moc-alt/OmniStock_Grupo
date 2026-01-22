@@ -34,7 +34,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="¡Bienvenido, Usuario!"
-            android:textSize="22sp"
+            android:textSize="30sp"
             android:textStyle="bold"
             android:textColor="@color/text_high_emphasis"/>
 
