@@ -7,4 +7,7 @@
 
     <color name="text_high_emphasis">#FFFFFF</color>
     <color name="text_medium_emphasis">#B3FFFFFF</color>
+    
+    <color name="accent_secondary">#FF4081</color>
+    <color name="error_color">#CF6679</color>
 </resources>
