@@ -41,7 +41,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Categoria categoria = categorias.get(position);
-        holder.txtCategoryName.setText(categoria.getNombre());
+        holder.txtCategoryName.setText(categoria.nombre);
 
         if (selectedPosition == position) {
             // Selected Style (Accent Stroke, maybe slight tint)
