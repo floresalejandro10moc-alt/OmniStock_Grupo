@@ -6,8 +6,9 @@
     android:tint="#E91E63">
   <path
       android:fillColor="@android:color/white"
-      android:pathData="M13,2.5l3.5,3.5l-1.4,1.4l-2.1,-2.1v14h-6v-14l-2.1,2.1l-1.4,-1.4l3.5,-3.5l3,3z"/>
+      android:pathData="M12,2c-4,0 -8,4 -8,4v1h16V6C20,6 16,2 12,2zM6,9v11h12V9H6z"/>
+  <!-- Alternative simpler path for a shirt -->
   <path
       android:fillColor="@android:color/white"
-      android:pathData="M20,6h-2.18c-0.11,-0.31 -0.18,-0.65 -0.18,-1c0,-1.66 1.34,-3 3,-3v2c-0.55,0 -1,0.45 -1,1h-1.82zM4,6h2.18c0.11,-0.31 0.18,-0.65 0.18,-1c0,-1.66 -1.34,-3 -3,-3v2c0.55,0 1,0.45 1,1h1.82z"/>
+      android:pathData="M12,1L6,5l2,1l1,-2h6l1,2l2,-1L12,1zM4,6v16h16V6h-2v12H6V6H4z"/>
 </vector>
