@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="260dp"
+    android:layout_height="wrap_content"
+    android:layout_marginEnd="16dp"
+    app:cardBackgroundColor="@color/glass_white_10"
+    app:cardCornerRadius="24dp"
+    app:cardElevation="0dp"
+    app:strokeColor="@color/accent_secondary"
+    app:strokeWidth="1dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/lblDestacado"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="DESTACADO"
+            android:textSize="10sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent_secondary"
+            android:letterSpacing="0.1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageView
+            android:id="@+id/imgFeatured"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:src="@drawable/caja_omni"
+            app:tint="@color/text_high_emphasis"
+            android:background="@drawable/circle_glass"
+            android:padding="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/lblDestacado"
+            android:layout_marginTop="12dp"/>
+
+        <TextView
+            android:id="@+id/txtFeaturedName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Nombre Producto"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/text_high_emphasis"
+            android:maxLines="2"
+            android:ellipsize="end"
+            android:layout_marginStart="12dp"
+            app:layout_constraintStart_toEndOf="@id/imgFeatured"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/imgFeatured"/>
+
+        <TextView
+            android:id="@+id/txtFeaturedPrice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.00"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:textColor="@color/accent_primary"
+            android:layout_marginTop="4dp"
+            app:layout_constraintStart_toStartOf="@id/txtFeaturedName"
+            app:layout_constraintTop_toBottomOf="@id/txtFeaturedName"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -3,19 +3,18 @@ package com.example.proyectofinalpoo.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.GridLayoutManager; // Import GridLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import android.widget.ImageButton;
 
 import com.example.proyectofinalpoo.R;
 import com.example.proyectofinalpoo.data.AppDatabase;
 import com.example.proyectofinalpoo.model.Categoria;
 import com.example.proyectofinalpoo.model.Producto;
-import com.example.proyectofinalpoo.util.DataGenerator;
 import com.example.proyectofinalpoo.util.DataGenerator;
 import com.example.proyectofinalpoo.util.SessionManager;
 
@@ -29,52 +28,72 @@ public class MainActivity extends AppCompatActivity {
     ImageButton btnCerrar, btnCarrito, btnHistorial;
     com.google.android.material.floatingactionbutton.FloatingActionButton fabMain, fabAddProduct, fabAddCategory;
     TextView tvNombreUser, lblAddProduct, lblAddCategory;
-    RecyclerView recyclerView;
+
+    // Recyclers
+    RecyclerView recyclerMain;
+    RecyclerView recyclerCategories;
+    RecyclerView recyclerFeatured;
+
+    // Adapters
     CatalogoAdapter adapter;
+    CategoryAdapter categoryAdapter;
+    FeaturedAdapter featuredAdapter;
+
     SessionManager session;
     boolean isFabOpen = false;
 
-    // Search
+    // Search & Filter
     android.widget.EditText etBusqueda;
     ImageButton btnClearSearch;
+    int selectedCategoryId = -1; // -1 = Todos
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         // --- LÓGICA DE CARGA ÚNICA ---
         android.content.SharedPreferences prefs = getSharedPreferences("OmniStockPrefs", MODE_PRIVATE);
         boolean datosCargados = prefs.getBoolean("datos_iniciales_cargados", false);
 
         if (!datosCargados) {
-            // Solo se ejecuta si es la primera vez
             DataGenerator.cargar200Datos(this);
-
-            // Guardamos que ya se hizo la carga
             prefs.edit().putBoolean("datos_iniciales_cargados", true).apply();
             Toast.makeText(this, "Base de datos inicializada", Toast.LENGTH_SHORT).show();
         }
         // ----------------------------
-        // Dentro del onCreate de MainActivity.java
 
         // 1. Inicializar SessionManager
         session = new SessionManager(this);
 
-        // 2. Verificar si NO está logueado (Seguridad)
+        // 2. Verificar si NO está logueado
         if (!session.estaLogueado()) {
             irAlLogin();
-            return; // Detenemos la ejecución si no hay sesión
+            return;
         }
 
-        // 3. Vincular Vistas con el XML
+        // 3. Vincular Vistas
         tvNombreUser = findViewById(R.id.tvNombreUsuario);
         btnCerrar = findViewById(R.id.btnCerrarSesion);
         btnCarrito = findViewById(R.id.btnIrAlCarrito);
         btnHistorial = findViewById(R.id.btnHistorial);
 
-        // Binding Search
+        // Search
         etBusqueda = findViewById(R.id.etBusqueda);
         btnClearSearch = findViewById(R.id.btnClearSearch);
+
+        // Recyclers
+        recyclerMain = findViewById(R.id.recyclerMain);
+        recyclerCategories = findViewById(R.id.recyclerCategories);
+        recyclerFeatured = findViewById(R.id.recyclerFeatured);
+
+        // Layout Managers
+        recyclerMain.setLayoutManager(new GridLayoutManager(this, 2));
+
+        recyclerCategories.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this,
+                androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false));
+        recyclerFeatured.setLayoutManager(new androidx.recyclerview.widget.LinearLayoutManager(this,
+                androidx.recyclerview.widget.LinearLayoutManager.HORIZONTAL, false));
 
         // FABs
         fabMain = findViewById(R.id.fabMain);
@@ -83,14 +102,13 @@ public class MainActivity extends AppCompatActivity {
         lblAddProduct = findViewById(R.id.lblAddProduct);
         lblAddCategory = findViewById(R.id.lblAddCategory);
 
-        recyclerView = findViewById(R.id.recyclerMain);
-        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Use Grid with 2 columns
-
-        // 4. Mostrar nombre del usuario en la cabecera (Dos líneas)
+        // 4. Mostrar nombre
         String alias = session.getAliasLogueado();
         tvNombreUser.setText("¡Bienvenido,\n" + alias + "!");
 
-        // Carga inicial (Query vacío)
+        // Cargar Datos
+        cargarCategorias();
+        cargarDestacados();
         cargarProductos("");
 
         // LOGIC SEARCH
@@ -119,46 +137,39 @@ public class MainActivity extends AppCompatActivity {
             cargarProductos("");
         });
 
-        // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
+        // 5. LÓGICA DE ROLES
         if (!session.esAdmin()) {
             fabMain.setVisibility(View.GONE);
-            // Los otros ya estan GONE por layout
         } else {
             fabMain.setVisibility(View.VISIBLE);
             fabMain.setOnClickListener(v -> toggleFabMenu());
         }
 
-        // --- LISTENERS (ACCIONES DE LOS BOTONES) ---
-
-        // A) Botón Cerrar Sesión
+        // --- LISTENERS ---
         btnCerrar.setOnClickListener(v -> {
             session.cerrarSesion();
             irAlLogin();
         });
 
-        // B) Botón Ir al Carrito
         btnCarrito.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CarritoActivity.class);
             startActivity(intent);
         });
 
-        // C) Botón Ir al Historial
         btnHistorial.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, HistorialFacturasActivity.class);
             startActivity(intent);
         });
 
-        // E) Botón Nuevo Producto (Solo Admin)
         fabAddProduct.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
             startActivity(intent);
-            toggleFabMenu(); // Close menu
+            toggleFabMenu();
         });
-        // F) Botón Gestión de Categorías (Solo Admin)
         fabAddCategory.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CategoriaActivity.class);
             startActivity(intent);
-            toggleFabMenu(); // Close menu
+            toggleFabMenu();
         });
     }
 
@@ -168,41 +179,89 @@ public class MainActivity extends AppCompatActivity {
             lblAddProduct.setVisibility(View.GONE);
             fabAddCategory.setVisibility(View.GONE);
             lblAddCategory.setVisibility(View.GONE);
-            fabMain.setImageResource(R.drawable.ic_add); // Change icon back to +
+            fabMain.setImageResource(R.drawable.ic_add);
             isFabOpen = false;
         } else {
             fabAddProduct.setVisibility(View.VISIBLE);
             lblAddProduct.setVisibility(View.VISIBLE);
             fabAddCategory.setVisibility(View.VISIBLE);
             lblAddCategory.setVisibility(View.VISIBLE);
-            // Optionally change icon to close
-            // fabMain.setImageResource(R.drawable.ic_close);
             isFabOpen = true;
         }
+    }
+
+    private void cargarCategorias() {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(this);
+            List<Categoria> dbCategorias = db.inventarioDao().obtenerCategorias();
+
+            // Add "Todos" option
+            Categoria all = new Categoria();
+            all.id_Categoria = -1; // Public field
+            all.nombre = "Todos"; // Public field
+            dbCategorias.add(0, all);
+
+            runOnUiThread(() -> {
+                categoryAdapter = new CategoryAdapter(dbCategorias, categoria -> {
+                    selectedCategoryId = categoria.id_Categoria; // Public field
+                    cargarProductos(etBusqueda.getText().toString());
+                });
+                recyclerCategories.setAdapter(categoryAdapter);
+            });
+        });
+    }
+
+    private void cargarDestacados() {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(this);
+            List<Producto> all = db.inventarioDao().obtenerTodosProductos();
+            List<Producto> featured = new java.util.ArrayList<>();
+            if (all.size() > 5) {
+                featured.addAll(all.subList(0, 5));
+            } else {
+                featured.addAll(all);
+            }
+
+            runOnUiThread(() -> {
+                featuredAdapter = new FeaturedAdapter(featured);
+                recyclerFeatured.setAdapter(featuredAdapter);
+            });
+        });
     }
 
     private void cargarProductos(String query) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
             List<Producto> productos;
+
+            // 1. Filter by Search Query
             if (query == null || query.trim().isEmpty()) {
                 productos = db.inventarioDao().obtenerTodosProductos();
             } else {
                 productos = db.inventarioDao().buscarProductosPorNombre(query);
             }
 
-            List<Categoria> categoriasList = db.inventarioDao().obtenerCategorias();
+            // 2. Filter by Category (In Memory)
+            if (selectedCategoryId != -1) {
+                List<Producto> filtered = new java.util.ArrayList<>();
+                for (Producto p : productos) {
+                    if (p.id_Categoria == selectedCategoryId) { // Public field
+                        filtered.add(p);
+                    }
+                }
+                productos = filtered;
+            }
 
+            List<Categoria> categoriasList = db.inventarioDao().obtenerCategorias();
             Map<Integer, Categoria> categoriasMap = new HashMap<>();
             for (Categoria c : categoriasList) {
-                categoriasMap.put(c.id_Categoria, c);
+                categoriasMap.put(c.id_Categoria, c); // Public field
             }
 
             runOnUiThread(() -> {
-                // Pasamos si es ADMIN para mostrar/ocultar stock
                 boolean esAdmin = session.esAdmin();
                 adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
-                recyclerView.setAdapter(adapter);
+                recyclerMain.setAdapter(adapter);
             });
         });
     }
@@ -210,12 +269,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        cargarProductos(""); // Recargar lista al volver
+        cargarProductos("");
     }
 
     private void irAlLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
-        // Flags para limpiar el historial y que no puedan volver atrás
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
