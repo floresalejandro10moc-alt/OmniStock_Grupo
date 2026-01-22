@@ -17,94 +17,88 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- Header: Welcome + Logout -->
+    <!-- Header Area: Greeting + Icons -->
     <LinearLayout
         android:id="@+id/headerLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="24dp"
+        android:padding="16dp"
         android:gravity="center_vertical"
         app:layout_constraintTop_toTopOf="parent">
 
+        <!-- Greeting (Left) -->
         <TextView
             android:id="@+id/tvNombreUsuario"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Bienvenido"
+            android:text="¡Bienvenido, Usuario!"
             android:textSize="22sp"
             android:textStyle="bold"
             android:textColor="@color/text_high_emphasis"/>
 
-        <ImageButton
-            android:id="@+id/btnCerrarSesion"
-            android:layout_width="48dp"
-            android:layout_height="48dp"
-            android:src="@drawable/ic_logout"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:contentDescription="Logout"
-            app:tint="@color/text_high_emphasis"/>
-    </LinearLayout>
+        <!-- Icons (Right) -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
 
-    <!-- Navigation Icon Bar -->
-    <LinearLayout
-        android:id="@+id/navBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center"
-        android:paddingBottom="16dp"
-        app:layout_constraintTop_toBottomOf="@id/headerLayout">
+            <ImageButton
+                android:id="@+id/btnIrAlCarrito"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_cart"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:scaleType="fitCenter"
+                android:padding="8dp"/>
 
-        <ImageButton
-            android:id="@+id/btnIrAlCarrito"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_cart"
-            android:background="@drawable/bg_circle_o"
-            android:backgroundTint="@color/glass_white_10"
-            android:layout_marginEnd="16dp"
-            app:tint="#FFFFFF"
-            android:padding="12dp"
-            android:scaleType="fitCenter"/>
+            <ImageButton
+                android:id="@+id/btnHistorial"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_history"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:layout_marginStart="8dp"
+                android:scaleType="fitCenter"
+                android:padding="8dp"/>
 
-        <ImageButton
-            android:id="@+id/btnHistorial"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_history"
-            android:background="@drawable/bg_circle_o"
-            android:backgroundTint="@color/glass_white_10"
-            android:layout_marginEnd="16dp"
-            app:tint="#FFFFFF"
-            android:padding="12dp"
-            android:scaleType="fitCenter"/>
+            <!-- Admin Icons (Optional visibility) -->
+            <ImageButton
+                android:id="@+id/btnAgregarProducto"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_add"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:layout_marginStart="8dp"
+                android:scaleType="fitCenter"
+                android:padding="8dp"/>
 
-        <!-- Admin Icons -->
-        <ImageButton
-            android:id="@+id/btnAgregarProducto"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_add"
-            android:background="@drawable/bg_circle_o"
-            android:backgroundTint="@color/glass_white_10"
-            android:layout_marginEnd="16dp"
-            app:tint="#FFFFFF"
-            android:padding="12dp"
-            android:scaleType="fitCenter"/>
+            <ImageButton
+                android:id="@+id/btnGestionCategorias"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_category"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:layout_marginStart="8dp"
+                android:scaleType="fitCenter"
+                android:padding="8dp"/>
 
-        <ImageButton
-            android:id="@+id/btnGestionCategorias"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:src="@drawable/ic_category"
-            android:background="@drawable/bg_circle_o"
-            android:backgroundTint="@color/glass_white_10"
-            app:tint="#FFFFFF"
-            android:padding="12dp"
-            android:scaleType="fitCenter"/>
-
+            <ImageButton
+                android:id="@+id/btnCerrarSesion"
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/ic_logout"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:layout_marginStart="16dp"
+                android:scaleType="fitCenter"
+                android:padding="8dp"/>
+        </LinearLayout>
     </LinearLayout>
 
     <!-- Product List Title -->
@@ -118,7 +112,7 @@
         android:textColor="@color/text_high_emphasis"
         android:layout_marginStart="24dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/navBar"
+        app:layout_constraintTop_toBottomOf="@id/headerLayout"
         android:layout_marginTop="8dp"/>
 
     <!-- Product RecyclerView -->
@@ -126,7 +120,7 @@
         android:id="@+id/recyclerMain"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:padding="16dp"
+        android:padding="8dp"
         android:clipToPadding="false"
         app:layout_constraintTop_toBottomOf="@id/tvCatalogoTitle"
         app:layout_constraintBottom_toBottomOf="parent"/>

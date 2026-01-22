@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.GridLayoutManager; // Import GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView;
 import android.widget.ImageButton;
 
@@ -72,13 +72,13 @@ public class MainActivity extends AppCompatActivity {
         // btnCatalogo ya no existe, ahora es el recycler en la misma pantalla
         btnNuevoProd = findViewById(R.id.btnAgregarProducto);
         recyclerView = findViewById(R.id.recyclerMain);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Use Grid with 2 columns
 
         cargarProductos();
 
         // 4. Mostrar nombre del usuario en la cabecera
         String alias = session.getAliasLogueado();
-        tvNombreUser.setText("Bienvenido, " + alias);
+        tvNombreUser.setText("¡Bienvenido, " + alias + "!");
 
         // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
         if (!session.esAdmin()) {
