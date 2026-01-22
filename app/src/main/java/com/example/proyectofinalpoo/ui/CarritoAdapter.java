@@ -48,15 +48,19 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
 
         // 3. CAMBIO VISUAL DINÁMICO (Requisito Rúbrica)
         // Cambiamos el color de fondo de la tarjeta según el tipo de clase
+        // USAREMOS COLORES CON ALPHA (VIDRIO TINTADO) PARA MANTENER LA ESTÉTICA DARK
         if (producto instanceof Electronico) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#E3F2FD")); // Azulito
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#262196F3")); // Azul Vidrio
             holder.txtDetalle.setText("Incluye IVA + Suntuario");
         } else if (producto instanceof Ropa) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#FCE4EC")); // Rosadito
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#26E91E63")); // Rosa Vidrio
             holder.txtDetalle.setText("Incluye IVA (Posible Descuento)");
         } else if (producto instanceof Alimento) {
-            holder.cardView.setCardBackgroundColor(Color.parseColor("#E8F5E9")); // Verdesito
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#264CAF50")); // Verde Vidrio
             holder.txtDetalle.setText("0% IVA");
+        } else {
+            // Default Glass
+            holder.cardView.setCardBackgroundColor(Color.parseColor("#1AFFFFFF"));
         }
 
         // 4. Configurar cantidad y botones
