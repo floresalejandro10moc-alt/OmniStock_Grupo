@@ -68,12 +68,16 @@ public class CarritoAdapter extends RecyclerView.Adapter<CarritoAdapter.Producto
 
         // Botón MÁS
         holder.btnMas.setOnClickListener(v -> {
-            com.example.proyectofinalpoo.logic.CarritoManager.getInstance().aumentarCantidad(position);
-            notifyItemChanged(position); // Solo actualizamos este item
-            // notifyItemRangeChanged no es necesario si solo cambia el contenido visual de
-            // uno
-            if (onCartUpdate != null) {
-                onCartUpdate.run();
+            if (producto.getCantidadCarrito() < (producto.stock - 1)) {
+                com.example.proyectofinalpoo.logic.CarritoManager.getInstance().aumentarCantidad(position);
+                notifyItemChanged(position); // Solo actualizamos este item
+                if (onCartUpdate != null) {
+                    onCartUpdate.run();
+                }
+            } else {
+                android.widget.Toast.makeText(holder.itemView.getContext(),
+                        "Stock máximo alcanzado (se requiere dejar 1 en inventario)",
+                        android.widget.Toast.LENGTH_SHORT).show();
             }
         });
 
