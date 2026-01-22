@@ -25,13 +25,14 @@ import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Declaramos todos los botones de la interfaz
     // Declaramos componentes UI
-    ImageButton btnCerrar, btnCarrito, btnHistorial, btnNuevoProd, btnCategorias;
-    TextView tvNombreUser;
+    ImageButton btnCerrar, btnCarrito, btnHistorial;
+    com.google.android.material.floatingactionbutton.FloatingActionButton fabMain, fabAddProduct, fabAddCategory;
+    TextView tvNombreUser, lblAddProduct, lblAddCategory;
     RecyclerView recyclerView;
     CatalogoAdapter adapter;
     SessionManager session;
+    boolean isFabOpen = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,11 +67,14 @@ public class MainActivity extends AppCompatActivity {
         btnCerrar = findViewById(R.id.btnCerrarSesion);
         btnCarrito = findViewById(R.id.btnIrAlCarrito);
         btnHistorial = findViewById(R.id.btnHistorial);
-        btnCategorias = findViewById(R.id.btnGestionCategorias);
 
-        // Estos IDs deben coincidir con tu activity_main.xml
-        // btnCatalogo ya no existe, ahora es el recycler en la misma pantalla
-        btnNuevoProd = findViewById(R.id.btnAgregarProducto);
+        // FABs
+        fabMain = findViewById(R.id.fabMain);
+        fabAddProduct = findViewById(R.id.fabAddProduct);
+        fabAddCategory = findViewById(R.id.fabAddCategory);
+        lblAddProduct = findViewById(R.id.lblAddProduct);
+        lblAddCategory = findViewById(R.id.lblAddCategory);
+
         recyclerView = findViewById(R.id.recyclerMain);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 2)); // Use Grid with 2 columns
 
@@ -82,8 +86,11 @@ public class MainActivity extends AppCompatActivity {
 
         // 5. LÓGICA DE ROLES: Ocultar botón de "Nuevo Producto" si no es Admin
         if (!session.esAdmin()) {
-            btnNuevoProd.setVisibility(View.GONE);
-            btnCategorias.setVisibility(View.GONE); // Solo el admin podrá verlo
+            fabMain.setVisibility(View.GONE);
+            // Los otros ya estan GONE por layout
+        } else {
+            fabMain.setVisibility(View.VISIBLE);
+            fabMain.setOnClickListener(v -> toggleFabMenu());
         }
 
         // --- LISTENERS (ACCIONES DE LOS BOTONES) ---
@@ -106,21 +113,37 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // D) Cargar Productos al regresar (para actualizar la lista si algo cambia)
-        // Se maneja automático al inicio, pero si agregan prod y vuelven:
-        // Lo ideal sería onResume(), pero por simplicidad lo dejamos en onCreate
-        // inicial.
-
         // E) Botón Nuevo Producto (Solo Admin)
-        btnNuevoProd.setOnClickListener(v -> {
+        fabAddProduct.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
             startActivity(intent);
+            toggleFabMenu(); // Close menu
         });
         // F) Botón Gestión de Categorías (Solo Admin)
-        btnCategorias.setOnClickListener(v -> {
+        fabAddCategory.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CategoriaActivity.class);
             startActivity(intent);
+            toggleFabMenu(); // Close menu
         });
+    }
+
+    private void toggleFabMenu() {
+        if (isFabOpen) {
+            fabAddProduct.setVisibility(View.GONE);
+            lblAddProduct.setVisibility(View.GONE);
+            fabAddCategory.setVisibility(View.GONE);
+            lblAddCategory.setVisibility(View.GONE);
+            fabMain.setImageResource(R.drawable.ic_add); // Change icon back to +
+            isFabOpen = false;
+        } else {
+            fabAddProduct.setVisibility(View.VISIBLE);
+            lblAddProduct.setVisibility(View.VISIBLE);
+            fabAddCategory.setVisibility(View.VISIBLE);
+            lblAddCategory.setVisibility(View.VISIBLE);
+            // Optionally change icon to close
+            // fabMain.setImageResource(R.drawable.ic_close);
+            isFabOpen = true;
+        }
     }
 
     private void cargarProductos() {
