@@ -7,13 +7,8 @@ import androidx.room.ForeignKey;
 import androidx.room.ColumnInfo;
 import androidx.room.Index;
 
-@Entity(tableName = "PRODUCTOS",
-        foreignKeys = @ForeignKey(entity = Categoria.class,
-                parentColumns = "id_Categoria",
-                childColumns = "id_Categoria",
-                onDelete = ForeignKey.RESTRICT,
-                onUpdate = ForeignKey.CASCADE),
-        indices = {@Index(value = "pro_Nombre"), @Index(value = "id_Categoria")})
+@Entity(tableName = "PRODUCTOS", foreignKeys = @ForeignKey(entity = Categoria.class, parentColumns = "id_Categoria", childColumns = "id_Categoria", onDelete = ForeignKey.CASCADE, onUpdate = ForeignKey.CASCADE), indices = {
+        @Index(value = "pro_Nombre"), @Index(value = "id_Categoria") })
 public class Producto {
     @PrimaryKey(autoGenerate = true)
     public int id_Producto;
@@ -41,11 +36,13 @@ public class Producto {
     @ColumnInfo(name = "pro_Estado", defaultValue = "ACT")
     public String estado;
 
-    public Producto() {}
+    public Producto() {
+    }
 
     // Constructor completo
     @Ignore
-    public Producto(int id_Categoria, String nombre, String descripcion, double precio, int stock, int tempAnterior, String caducidad) {
+    public Producto(int id_Categoria, String nombre, String descripcion, double precio, int stock, int tempAnterior,
+            String caducidad) {
         this.id_Categoria = id_Categoria;
         this.nombre = nombre;
         this.descripcion = descripcion;

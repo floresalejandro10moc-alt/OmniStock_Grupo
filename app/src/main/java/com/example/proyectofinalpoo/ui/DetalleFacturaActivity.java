@@ -98,17 +98,19 @@ public class DetalleFacturaActivity extends AppCompatActivity {
 
         for (DetalleParaLogica item : detalles) {
             double precioBase = item.producto.precioBase;
-            subtotal += precioBase;
+            int cantidad = item.cantidadComprada; // Obtener cantidad
 
-            // Cálculo de impuestos por producto
+            subtotal += precioBase * cantidad;
+
+            // Cálculo de impuestos por producto (multiplicado por cantidad)
             if (item.categoria.iva == 15.0) {
-                totalIva15 += precioBase * 0.15;
+                totalIva15 += (precioBase * 0.15) * cantidad;
             }
             if (item.categoria.iva == 12.0) {
-                totalIva12 += precioBase * 0.12;
+                totalIva12 += (precioBase * 0.12) * cantidad;
             }
             if (item.categoria.impuesto == 5.0) {
-                totalImpSantuario += precioBase * 0.05;
+                totalImpSantuario += (precioBase * 0.05) * cantidad;
             }
         }
 
