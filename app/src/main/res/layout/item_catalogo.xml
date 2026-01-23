@@ -61,6 +61,36 @@
             android:textSize="12sp"
             android:layout_marginBottom="16dp"/>
 
+        <LinearLayout
+            android:id="@+id/layoutAdminButtons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:visibility="gone"
+            android:layout_marginBottom="8dp">
+
+            <ImageButton
+                android:id="@+id/btnItemCatalogoEditar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_menu_edit"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/text_high_emphasis"
+                android:contentDescription="Editar"
+                android:layout_marginEnd="16dp"/>
+
+            <ImageButton
+                android:id="@+id/btnItemCatalogoEliminar"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@android:drawable/ic_menu_delete"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                app:tint="@color/accent_secondary"
+                android:contentDescription="Eliminar"/>
+
+        </LinearLayout>
+
         <Button
             android:id="@+id/btnItemCatalogoAgregar"
             android:layout_width="match_parent"

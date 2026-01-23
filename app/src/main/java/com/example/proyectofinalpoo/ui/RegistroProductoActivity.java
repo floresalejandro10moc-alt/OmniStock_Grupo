@@ -34,6 +34,7 @@ public class RegistroProductoActivity extends AppCompatActivity {
     // Mapa para saber el ID de categoría según la posición del Spinner
     // O simplemente una lista paralela
     private List<Categoria> listaCategorias;
+    private int idProductoEditar = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,17 @@ public class RegistroProductoActivity extends AppCompatActivity {
         btnGuardar = findViewById(R.id.btnGuardarProducto);
         btnCancelar = findViewById(R.id.btnCancelarRegistro);
         btnVolver = findViewById(R.id.btnVolver);
+
+        // Check for Edit Mode
+        if (getIntent().hasExtra("extra_id_producto")) {
+            idProductoEditar = getIntent().getIntExtra("extra_id_producto", -1);
+            if (idProductoEditar != -1) {
+                // Change UI for Edit
+                btnGuardar.setText("Actualizar Producto");
+                // Load Data
+                cargarDatosProducto(idProductoEditar);
+            }
+        }
 
         // 2. Cargar Categorías
         cargarCategorias();
@@ -104,6 +116,38 @@ public class RegistroProductoActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void cargarDatosProducto(int id) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(this);
+            Producto p = db.inventarioDao().obtenerProductoPorId(id);
+            if (p != null) {
+                runOnUiThread(() -> {
+                    etNombre.setText(p.nombre);
+                    etDescripcion.setText(p.descripcion);
+                    etPrecio.setText(String.valueOf(p.precioBase));
+                    etStock.setText(String.valueOf(p.stock));
+
+                    // Handle Category Spinner selection
+                    if (listaCategorias != null) {
+                        for (int i = 0; i < listaCategorias.size(); i++) {
+                            if (listaCategorias.get(i).id_Categoria == p.id_Categoria) {
+                                spinnerCategoria.setSelection(i);
+                                actualizarCamposDinamicos(listaCategorias.get(i));
+                                break;
+                            }
+                        }
+                    }
+
+                    // Handle specifics
+                    cbTemporadaAnterior.setChecked(p.esTemporadaAnterior == 1);
+                    if (p.fechaCaducidad != null) {
+                        etFechaCaducidad.setText(p.fechaCaducidad);
+                    }
+                });
+            }
+        });
+    }
+
     private void cargarCategorias() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
@@ -115,30 +159,15 @@ public class RegistroProductoActivity extends AppCompatActivity {
                     for (Categoria c : listaCategorias) {
                         nombresCategorias.add(c.nombre);
                     }
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                            android.R.layout.simple_spinner_item, nombresCategorias) {
-                        @Override
-                        public View getView(int position, View convertView, android.view.ViewGroup parent) {
-                            View view = super.getView(position, convertView, parent);
-                            if (view instanceof android.widget.TextView) {
-                                ((android.widget.TextView) view).setTextColor(android.graphics.Color.WHITE);
-                            }
-                            return view;
-                        }
-
-                        @Override
-                        public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
-                            View view = super.getDropDownView(position, convertView, parent);
-                            if (view instanceof android.widget.TextView) {
-                                ((android.widget.TextView) view).setTextColor(android.graphics.Color.WHITE);
-                                view.setBackgroundColor(android.graphics.Color.parseColor("#080E1E")); // Background
-                                                                                                       // oscuro
-                            }
-                            return view;
-                        }
-                    };
+                    ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                            R.layout.spinner_item, nombresCategorias);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapter);
+
+                    // Re-select category if loading product data happened before categories loaded
+                    if (idProductoEditar != -1) {
+                        cargarDatosProducto(idProductoEditar);
+                    }
                 }
             });
         });
@@ -156,7 +185,6 @@ public class RegistroProductoActivity extends AppCompatActivity {
         } else if (nombreCat.contains("alimento")) {
             layoutFechaCaducidad.setVisibility(View.VISIBLE);
         }
-        // Electrónico no tiene campos extra
     }
 
     private void guardarProducto() {
@@ -191,8 +219,8 @@ public class RegistroProductoActivity extends AppCompatActivity {
         int stock = 0;
         try {
             precio = Double.parseDouble(precioStr);
-            if (precio <= 0) { // CAMBIOS: Validar que no sea 0
-                etPrecio.setError("No puede ser cero o negativo");
+            if (precio <= 0) {
+                etPrecio.setError("Debe ser mayor a 0");
                 return;
             }
         } catch (NumberFormatException e) {
@@ -202,8 +230,8 @@ public class RegistroProductoActivity extends AppCompatActivity {
 
         try {
             stock = Integer.parseInt(stockStr);
-            if (stock < 0) {
-                etStock.setError("No puede ser negativo");
+            if (stock <= 0) {
+                etStock.setError("Debe ser mayor a 0"); // Interpreting "mayores a 1" as "positive / at least 1"
                 return;
             }
         } catch (NumberFormatException e) {
@@ -247,15 +275,23 @@ public class RegistroProductoActivity extends AppCompatActivity {
                 fechaCad);
         nuevoProd.estado = "ACT"; // Asegurar estado
 
-        // INSERTAR BD
+        // SAVE or UPDATE
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            db.inventarioDao().insertarProducto(nuevoProd);
-
-            runOnUiThread(() -> {
-                Toast.makeText(this, "Producto Registrado con Éxito", Toast.LENGTH_SHORT).show();
-                finish(); // Cerrar Activity
-            });
+            if (idProductoEditar != -1) {
+                nuevoProd.id_Producto = idProductoEditar;
+                db.inventarioDao().actualizarProducto(nuevoProd);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Producto Actualizado", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            } else {
+                db.inventarioDao().insertarProducto(nuevoProd);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Producto Registrado con Éxito", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            }
         });
     }
 }

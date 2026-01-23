@@ -232,13 +232,22 @@ public class MainActivity extends AppCompatActivity {
     private void cargarProductos(String query) {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
+            boolean esAdmin = session.esAdmin();
             List<Producto> productos;
 
-            // 1. Filter by Search Query
+            // 1. Filter by Search Query & Role
             if (query == null || query.trim().isEmpty()) {
-                productos = db.inventarioDao().obtenerTodosProductos();
+                if (esAdmin) {
+                    productos = db.inventarioDao().obtenerTodosProductos();
+                } else {
+                    productos = db.inventarioDao().obtenerProductosActivos();
+                }
             } else {
-                productos = db.inventarioDao().buscarProductosPorNombre(query);
+                if (esAdmin) {
+                    productos = db.inventarioDao().buscarProductosPorNombre(query);
+                } else {
+                    productos = db.inventarioDao().buscarProductosActivosPorNombre(query);
+                }
             }
 
             // 2. Filter by Category (In Memory)
@@ -260,8 +269,46 @@ public class MainActivity extends AppCompatActivity {
 
             List<Producto> finalProductos = productos;
             runOnUiThread(() -> {
-                boolean esAdmin = session.esAdmin();
                 adapter = new CatalogoAdapter(finalProductos, categoriasMap, esAdmin);
+
+                adapter.setOnProductoActionListener(new CatalogoAdapter.OnProductoActionListener() {
+                    @Override
+                    public void onEdit(Producto producto) {
+                        Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
+                        intent.putExtra("extra_id_producto", producto.id_Producto);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onToggleStatus(Producto producto) {
+                        String nuevoEstado = "INA".equals(producto.estado) ? "ACT" : "INA";
+                        String accionInfo = "INA".equals(producto.estado) ? "activar" : "deshabilitar";
+
+                        new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Confirmar Acción")
+                                .setMessage("¿Estás seguro de " + accionInfo + " el producto " + producto.nombre + "?")
+                                .setPositiveButton("Sí", (dialog, which) -> {
+                                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                                        AppDatabase db = AppDatabase.getDatabase(MainActivity.this);
+                                        db.inventarioDao().actualizarEstadoProducto(producto.id_Producto, nuevoEstado);
+                                        runOnUiThread(() -> {
+                                            android.widget.Toast.makeText(MainActivity.this,
+                                                    "Producto actualizado a " + nuevoEstado,
+                                                    android.widget.Toast.LENGTH_SHORT).show();
+                                            cargarProductos(etBusqueda.getText().toString()); // Refresh list
+                                        });
+                                    });
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+                    }
+
+                    @Override
+                    public void onDelete(Producto producto) {
+
+                    }
+                });
+
                 recyclerMain.setAdapter(adapter);
             });
         });
