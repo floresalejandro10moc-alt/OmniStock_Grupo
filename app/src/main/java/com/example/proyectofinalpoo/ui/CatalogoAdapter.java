@@ -38,6 +38,9 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
         this.productos = productos;
         this.categorias = categorias;
         this.esAdmin = esAdmin;
+    }
+
+    public void setOnProductoActionListener(OnProductoActionListener listener) {
         this.listener = listener;
     }
 

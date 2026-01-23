@@ -261,7 +261,37 @@ public class MainActivity extends AppCompatActivity {
             List<Producto> finalProductos = productos;
             runOnUiThread(() -> {
                 boolean esAdmin = session.esAdmin();
-                adapter =   new CatalogoAdapter(finalProductos, categoriasMap, esAdmin);
+                adapter = new CatalogoAdapter(finalProductos, categoriasMap, esAdmin);
+
+                adapter.setOnProductoActionListener(new CatalogoAdapter.OnProductoActionListener() {
+                    @Override
+                    public void onEdit(Producto producto) {
+                        Intent intent = new Intent(MainActivity.this, RegistroProductoActivity.class);
+                        intent.putExtra("extra_id_producto", producto.id_Producto);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onDelete(Producto producto) {
+                        new androidx.appcompat.app.AlertDialog.Builder(MainActivity.this)
+                                .setTitle("Confirmar Eliminación")
+                                .setMessage("¿Estás seguro de eliminar " + producto.nombre + "?")
+                                .setPositiveButton("Sí", (dialog, which) -> {
+                                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                                        AppDatabase db = AppDatabase.getDatabase(MainActivity.this);
+                                        db.inventarioDao().eliminarProducto(producto);
+                                        runOnUiThread(() -> {
+                                            android.widget.Toast.makeText(MainActivity.this, "Producto eliminado",
+                                                    android.widget.Toast.LENGTH_SHORT).show();
+                                            cargarProductos(etBusqueda.getText().toString()); // Refresh list
+                                        });
+                                    });
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+                    }
+                });
+
                 recyclerMain.setAdapter(adapter);
             });
         });

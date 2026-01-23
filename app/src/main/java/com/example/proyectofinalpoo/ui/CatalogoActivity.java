@@ -57,8 +57,37 @@ public class CatalogoActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 boolean esAdmin = session.esAdmin();
-                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin
-                );
+                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
+
+                adapter.setOnProductoActionListener(new CatalogoAdapter.OnProductoActionListener() {
+                    @Override
+                    public void onEdit(Producto producto) {
+                        Intent intent = new Intent(CatalogoActivity.this, RegistroProductoActivity.class);
+                        intent.putExtra("extra_id_producto", producto.id_Producto);
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onDelete(Producto producto) {
+                        new androidx.appcompat.app.AlertDialog.Builder(CatalogoActivity.this)
+                                .setTitle("Confirmar Eliminación")
+                                .setMessage("¿Estás seguro de eliminar " + producto.nombre + "?")
+                                .setPositiveButton("Sí", (dialog, which) -> {
+                                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                                        AppDatabase db = AppDatabase.getDatabase(CatalogoActivity.this);
+                                        db.inventarioDao().eliminarProducto(producto);
+                                        runOnUiThread(() -> {
+                                            android.widget.Toast.makeText(CatalogoActivity.this, "Producto eliminado",
+                                                    android.widget.Toast.LENGTH_SHORT).show();
+                                            cargarDatos(); // Reload list
+                                        });
+                                    });
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
+                    }
+                });
+
                 recyclerView.setAdapter(adapter);
             });
         });
