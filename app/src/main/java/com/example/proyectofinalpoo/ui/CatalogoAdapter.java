@@ -34,8 +34,7 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
         void onDelete(Producto producto);
     }
 
-    public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias, boolean esAdmin,
-            OnProductoActionListener listener) {
+    public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias, boolean esAdmin) {
         this.productos = productos;
         this.categorias = categorias;
         this.esAdmin = esAdmin;

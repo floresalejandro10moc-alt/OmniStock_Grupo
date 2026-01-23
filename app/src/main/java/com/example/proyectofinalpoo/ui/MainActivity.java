@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity {
             List<Producto> finalProductos = productos;
             runOnUiThread(() -> {
                 boolean esAdmin = session.esAdmin();
-                adapter = new CatalogoAdapter(finalProductos, categoriasMap, esAdmin);
+                adapter =   new CatalogoAdapter(finalProductos, categoriasMap, esAdmin);
                 recyclerMain.setAdapter(adapter);
             });
         });
