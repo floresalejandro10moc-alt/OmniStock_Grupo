@@ -161,28 +161,6 @@ public class RegistroProductoActivity extends AppCompatActivity {
                     }
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
                             R.layout.spinner_item, nombresCategorias);
-                    ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-                            android.R.layout.simple_spinner_item, nombresCategorias) {
-                        @Override
-                        public View getView(int position, View convertView, android.view.ViewGroup parent) {
-                            View view = super.getView(position, convertView, parent);
-                            if (view instanceof android.widget.TextView) {
-                                ((android.widget.TextView) view).setTextColor(android.graphics.Color.WHITE);
-                            }
-                            return view;
-                        }
-
-                        @Override
-                        public View getDropDownView(int position, View convertView, android.view.ViewGroup parent) {
-                            View view = super.getDropDownView(position, convertView, parent);
-                            if (view instanceof android.widget.TextView) {
-                                ((android.widget.TextView) view).setTextColor(android.graphics.Color.WHITE);
-                                view.setBackgroundColor(android.graphics.Color.parseColor("#080E1E")); // Background
-                                                                                                       // oscuro
-                            }
-                            return view;
-                        }
-                    };
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapter);
 
@@ -243,8 +221,6 @@ public class RegistroProductoActivity extends AppCompatActivity {
             precio = Double.parseDouble(precioStr);
             if (precio <= 0) {
                 etPrecio.setError("Debe ser mayor a 0");
-            if (precio <= 0) { // CAMBIOS: Validar que no sea 0
-                etPrecio.setError("No puede ser cero o negativo");
                 return;
             }
         } catch (NumberFormatException e) {
