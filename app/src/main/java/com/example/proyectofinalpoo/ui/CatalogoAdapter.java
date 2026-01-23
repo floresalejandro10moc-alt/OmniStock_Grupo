@@ -31,7 +31,7 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
     public interface OnProductoActionListener {
         void onEdit(Producto producto);
 
-        void onDelete(Producto producto);
+        void onToggleStatus(Producto producto);
     }
 
     public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias, boolean esAdmin) {
@@ -87,6 +87,15 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
             txtPrecio.setText(String.format("$%.2f", p.precioBase));
             txtStock.setText("Stock: " + p.stock);
 
+            // Visual indicator for Inactive products
+            if ("INA".equals(p.estado)) {
+                txtNombre.setTextColor(android.graphics.Color.GRAY);
+                itemView.setAlpha(0.6f);
+            } else {
+                txtNombre.setTextColor(android.graphics.Color.BLACK); // or default color
+                itemView.setAlpha(1.0f);
+            }
+
             // Dynamic Icon Logic
             if (c != null && c.nombre != null) {
                 String catName = c.nombre.toLowerCase();
@@ -110,6 +119,41 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
             } else {
                 txtStock.setVisibility(View.VISIBLE);
                 layoutAdminButtons.setVisibility(View.VISIBLE);
+
+                // Configure Toggle Button Icon
+                if ("INA".equals(p.estado)) {
+                    // Show "Activate" icon (recycle/check)
+                    // Assuming we might not have a specific 'activate' icon, we can reuse or use a
+                    // standard android one if allowed.
+                    // For now let's use android.R.drawable.ic_menu_revert or similar available, or
+                    // just keep trash but change color?
+                    // Better: Let's assume we want to restore.
+                    // Since I can't generate new drawables easily without 'generate_image' and
+                    // waiting,
+                    // I will use a system drawable or just the same button but rely on the dialog
+                    // context.
+                    // But user asked for specific icons/behavior.
+                    // Let's use `android.R.drawable.ic_menu_rotate` or similar for restore if
+                    // possible,
+                    // or just use the local resources.
+                    // Safest: Use `R.drawable.ic_add` (plus) or similar for "Activate" if available
+                    // in standard,
+                    // or just change color/tint.
+                    // Let's try to set a standard "restore" icon if possible.
+                    // `btnEliminar` is an ImageButton.
+
+                    // Note: User said "si esat ACT se veo el boton eliminar si esta INA se vea un
+                    // boton activar"
+                    // I will attempt to use a standard android system icon for "restore" / "check".
+                    btnEliminar.setImageResource(android.R.drawable.ic_input_add); // Temporary placeholder for
+                                                                                   // "Activate"
+                } else {
+                    // Regular delete icon
+                    btnEliminar.setImageResource(android.R.drawable.ic_menu_delete); // Or the original one defined in
+                                                                                     // XML
+                    // Actually, the XML has `srcCompat="@android:drawable/ic_menu_delete"`.
+                    // So I'll stick to that.
+                }
             }
 
             btnEditar.setOnClickListener(v -> {
@@ -119,7 +163,7 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
 
             btnEliminar.setOnClickListener(v -> {
                 if (listener != null)
-                    listener.onDelete(p);
+                    listener.onToggleStatus(p);
             });
 
             btnAgregar.setOnClickListener(v -> {

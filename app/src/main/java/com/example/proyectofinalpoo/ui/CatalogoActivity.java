@@ -47,7 +47,15 @@ public class CatalogoActivity extends AppCompatActivity {
     private void cargarDatos() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            List<Producto> productos = db.inventarioDao().obtenerTodosProductos();
+            boolean esAdmin = session.esAdmin();
+            List<Producto> productos;
+
+            if (esAdmin) {
+                productos = db.inventarioDao().obtenerTodosProductos();
+            } else {
+                productos = db.inventarioDao().obtenerProductosActivos();
+            }
+
             List<Categoria> categoriasList = db.inventarioDao().obtenerCategorias();
 
             Map<Integer, Categoria> categoriasMap = new HashMap<>();
@@ -56,7 +64,6 @@ public class CatalogoActivity extends AppCompatActivity {
             }
 
             runOnUiThread(() -> {
-                boolean esAdmin = session.esAdmin();
                 adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
 
                 adapter.setOnProductoActionListener(new CatalogoAdapter.OnProductoActionListener() {
@@ -65,6 +72,30 @@ public class CatalogoActivity extends AppCompatActivity {
                         Intent intent = new Intent(CatalogoActivity.this, RegistroProductoActivity.class);
                         intent.putExtra("extra_id_producto", producto.id_Producto);
                         startActivity(intent);
+                    }
+
+                    @Override
+                    public void onToggleStatus(Producto producto) {
+                        String nuevoEstado = "INA".equals(producto.estado) ? "ACT" : "INA";
+                        String accionInfo = "INA".equals(producto.estado) ? "activar" : "deshabilitar";
+
+                        new androidx.appcompat.app.AlertDialog.Builder(CatalogoActivity.this)
+                                .setTitle("Confirmar Acción")
+                                .setMessage("¿Estás seguro de " + accionInfo + " el producto " + producto.nombre + "?")
+                                .setPositiveButton("Sí", (dialog, which) -> {
+                                    AppDatabase.databaseWriteExecutor.execute(() -> {
+                                        AppDatabase db = AppDatabase.getDatabase(CatalogoActivity.this);
+                                        db.inventarioDao().actualizarEstadoProducto(producto.id_Producto, nuevoEstado);
+                                        runOnUiThread(() -> {
+                                            android.widget.Toast.makeText(CatalogoActivity.this,
+                                                    "Producto actualizado a " + nuevoEstado,
+                                                    android.widget.Toast.LENGTH_SHORT).show();
+                                            cargarDatos(); // Reload list
+                                        });
+                                    });
+                                })
+                                .setNegativeButton("No", null)
+                                .show();
                     }
 
                     @Override
