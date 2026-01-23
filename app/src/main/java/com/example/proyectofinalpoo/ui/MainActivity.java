@@ -302,6 +302,11 @@ public class MainActivity extends AppCompatActivity {
                                 .setNegativeButton("No", null)
                                 .show();
                     }
+
+                    @Override
+                    public void onDelete(Producto producto) {
+
+                    }
                 });
 
                 recyclerMain.setAdapter(adapter);

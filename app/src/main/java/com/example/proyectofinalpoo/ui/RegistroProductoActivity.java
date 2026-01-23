@@ -160,22 +160,12 @@ public class RegistroProductoActivity extends AppCompatActivity {
                         nombresCategorias.add(c.nombre);
                     }
                     ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                            android.R.layout.simple_spinner_item, nombresCategorias);
+                            R.layout.spinner_item, nombresCategorias);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapter);
 
                     // Re-select category if loading product data happened before categories loaded
                     if (idProductoEditar != -1) {
-                        // This is a simple retry, or we could chain the calls.
-                        // For simplicity, let's just trigger load again if title is set or rely on user
-                        // wait.
-                        // Better: call cargarDatosProducto AFTER categories if in edit mode.
-                        // But for now, we leave the re-selection logic inside cargarDatosProducto
-                        // primarily.
-                        // We can just call it again here if needed, but concurrency is tricky.
-                        // Let's rely on the fact that we call cargarDatosProducto in onCreate,
-                        // but effectively we might miss the spinner update if categories aren't ready.
-                        // FIX: Call cargarDatosProducto inside here after setting adapter.
                         cargarDatosProducto(idProductoEditar);
                     }
                 }
@@ -195,7 +185,6 @@ public class RegistroProductoActivity extends AppCompatActivity {
         } else if (nombreCat.contains("alimento")) {
             layoutFechaCaducidad.setVisibility(View.VISIBLE);
         }
-        // Electrónico no tiene campos extra
     }
 
     private void guardarProducto() {
@@ -230,8 +219,8 @@ public class RegistroProductoActivity extends AppCompatActivity {
         int stock = 0;
         try {
             precio = Double.parseDouble(precioStr);
-            if (precio < 0) {
-                etPrecio.setError("No puede ser negativo");
+            if (precio <= 0) {
+                etPrecio.setError("Debe ser mayor a 0");
                 return;
             }
         } catch (NumberFormatException e) {
@@ -241,8 +230,8 @@ public class RegistroProductoActivity extends AppCompatActivity {
 
         try {
             stock = Integer.parseInt(stockStr);
-            if (stock < 0) {
-                etStock.setError("No puede ser negativo");
+            if (stock <= 0) {
+                etStock.setError("Debe ser mayor a 0"); // Interpreting "mayores a 1" as "positive / at least 1"
                 return;
             }
         } catch (NumberFormatException e) {
