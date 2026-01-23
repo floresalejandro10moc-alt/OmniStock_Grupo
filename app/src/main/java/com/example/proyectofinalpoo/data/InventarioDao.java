@@ -109,6 +109,15 @@ public interface InventarioDao {
     @Delete
     void eliminarCategoria(Categoria categoria);
 
+    @Update
+    void actualizarProducto(Producto producto);
+
+    @Delete
+    void eliminarProducto(Producto producto);
+
+    @Query("SELECT * FROM PRODUCTOS WHERE id_Producto = :id LIMIT 1")
+    Producto obtenerProductoPorId(int id);
+
     @Query("SELECT * FROM PRODUCTOS WHERE pro_Nombre LIKE '%' || :query || '%' ORDER BY pro_Nombre ASC")
     List<Producto> buscarProductosPorNombre(String query);
 

@@ -34,6 +34,7 @@ public class RegistroProductoActivity extends AppCompatActivity {
     // Mapa para saber el ID de categoría según la posición del Spinner
     // O simplemente una lista paralela
     private List<Categoria> listaCategorias;
+    private int idProductoEditar = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +53,17 @@ public class RegistroProductoActivity extends AppCompatActivity {
         btnGuardar = findViewById(R.id.btnGuardarProducto);
         btnCancelar = findViewById(R.id.btnCancelarRegistro);
         btnVolver = findViewById(R.id.btnVolver);
+
+        // Check for Edit Mode
+        if (getIntent().hasExtra("extra_id_producto")) {
+            idProductoEditar = getIntent().getIntExtra("extra_id_producto", -1);
+            if (idProductoEditar != -1) {
+                // Change UI for Edit
+                btnGuardar.setText("Actualizar Producto");
+                // Load Data
+                cargarDatosProducto(idProductoEditar);
+            }
+        }
 
         // 2. Cargar Categorías
         cargarCategorias();
@@ -104,6 +116,38 @@ public class RegistroProductoActivity extends AppCompatActivity {
         datePickerDialog.show();
     }
 
+    private void cargarDatosProducto(int id) {
+        AppDatabase.databaseWriteExecutor.execute(() -> {
+            AppDatabase db = AppDatabase.getDatabase(this);
+            Producto p = db.inventarioDao().obtenerProductoPorId(id);
+            if (p != null) {
+                runOnUiThread(() -> {
+                    etNombre.setText(p.nombre);
+                    etDescripcion.setText(p.descripcion);
+                    etPrecio.setText(String.valueOf(p.precioBase));
+                    etStock.setText(String.valueOf(p.stock));
+
+                    // Handle Category Spinner selection
+                    if (listaCategorias != null) {
+                        for (int i = 0; i < listaCategorias.size(); i++) {
+                            if (listaCategorias.get(i).id_Categoria == p.id_Categoria) {
+                                spinnerCategoria.setSelection(i);
+                                actualizarCamposDinamicos(listaCategorias.get(i));
+                                break;
+                            }
+                        }
+                    }
+
+                    // Handle specifics
+                    cbTemporadaAnterior.setChecked(p.esTemporadaAnterior == 1);
+                    if (p.fechaCaducidad != null) {
+                        etFechaCaducidad.setText(p.fechaCaducidad);
+                    }
+                });
+            }
+        });
+    }
+
     private void cargarCategorias() {
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
@@ -119,6 +163,21 @@ public class RegistroProductoActivity extends AppCompatActivity {
                             android.R.layout.simple_spinner_item, nombresCategorias);
                     adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     spinnerCategoria.setAdapter(adapter);
+
+                    // Re-select category if loading product data happened before categories loaded
+                    if (idProductoEditar != -1) {
+                        // This is a simple retry, or we could chain the calls.
+                        // For simplicity, let's just trigger load again if title is set or rely on user
+                        // wait.
+                        // Better: call cargarDatosProducto AFTER categories if in edit mode.
+                        // But for now, we leave the re-selection logic inside cargarDatosProducto
+                        // primarily.
+                        // We can just call it again here if needed, but concurrency is tricky.
+                        // Let's rely on the fact that we call cargarDatosProducto in onCreate,
+                        // but effectively we might miss the spinner update if categories aren't ready.
+                        // FIX: Call cargarDatosProducto inside here after setting adapter.
+                        cargarDatosProducto(idProductoEditar);
+                    }
                 }
             });
         });
@@ -227,15 +286,23 @@ public class RegistroProductoActivity extends AppCompatActivity {
                 fechaCad);
         nuevoProd.estado = "ACT"; // Asegurar estado
 
-        // INSERTAR BD
+        // SAVE or UPDATE
         AppDatabase.databaseWriteExecutor.execute(() -> {
             AppDatabase db = AppDatabase.getDatabase(this);
-            db.inventarioDao().insertarProducto(nuevoProd);
-
-            runOnUiThread(() -> {
-                Toast.makeText(this, "Producto Registrado con Éxito", Toast.LENGTH_SHORT).show();
-                finish(); // Cerrar Activity
-            });
+            if (idProductoEditar != -1) {
+                nuevoProd.id_Producto = idProductoEditar;
+                db.inventarioDao().actualizarProducto(nuevoProd);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Producto Actualizado", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            } else {
+                db.inventarioDao().insertarProducto(nuevoProd);
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Producto Registrado con Éxito", Toast.LENGTH_SHORT).show();
+                    finish();
+                });
+            }
         });
     }
 }

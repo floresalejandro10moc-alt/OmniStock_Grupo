@@ -26,10 +26,20 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
     private Map<Integer, Categoria> categorias;
     private boolean esAdmin;
 
-    public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias, boolean esAdmin) {
+    private OnProductoActionListener listener;
+
+    public interface OnProductoActionListener {
+        void onEdit(Producto producto);
+
+        void onDelete(Producto producto);
+    }
+
+    public CatalogoAdapter(List<Producto> productos, Map<Integer, Categoria> categorias, boolean esAdmin,
+            OnProductoActionListener listener) {
         this.productos = productos;
         this.categorias = categorias;
         this.esAdmin = esAdmin;
+        this.listener = listener;
     }
 
     @NonNull
@@ -53,16 +63,21 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
 
     class CatalogoViewHolder extends RecyclerView.ViewHolder {
         private TextView txtNombre, txtPrecio, txtStock;
-        private android.widget.ImageView imgIcon; // Added ImageView
+        private android.widget.ImageView imgIcon;
         private Button btnAgregar;
+        private android.widget.LinearLayout layoutAdminButtons;
+        private android.widget.ImageButton btnEditar, btnEliminar;
 
         public CatalogoViewHolder(@NonNull View itemView) {
             super(itemView);
             txtNombre = itemView.findViewById(R.id.txtItemCatalogoNombre);
             txtPrecio = itemView.findViewById(R.id.txtItemCatalogoPrecio);
             txtStock = itemView.findViewById(R.id.txtItemCatalogoStock);
-            imgIcon = itemView.findViewById(R.id.imgItemCatalogoIcon); // Bind view
+            imgIcon = itemView.findViewById(R.id.imgItemCatalogoIcon);
             btnAgregar = itemView.findViewById(R.id.btnItemCatalogoAgregar);
+            layoutAdminButtons = itemView.findViewById(R.id.layoutAdminButtons);
+            btnEditar = itemView.findViewById(R.id.btnItemCatalogoEditar);
+            btnEliminar = itemView.findViewById(R.id.btnItemCatalogoEliminar);
         }
 
         void bind(Producto p, Categoria c) {
@@ -86,12 +101,24 @@ public class CatalogoAdapter extends RecyclerView.Adapter<CatalogoAdapter.Catalo
                 imgIcon.setImageResource(R.drawable.caja_omni);
             }
 
-            // Si NO es admin, ocultamos el stock
+            // Logic for Admin
             if (!esAdmin) {
                 txtStock.setVisibility(View.GONE);
+                layoutAdminButtons.setVisibility(View.GONE);
             } else {
                 txtStock.setVisibility(View.VISIBLE);
+                layoutAdminButtons.setVisibility(View.VISIBLE);
             }
+
+            btnEditar.setOnClickListener(v -> {
+                if (listener != null)
+                    listener.onEdit(p);
+            });
+
+            btnEliminar.setOnClickListener(v -> {
+                if (listener != null)
+                    listener.onDelete(p);
+            });
 
             btnAgregar.setOnClickListener(v -> {
                 if (p.stock > 0) {

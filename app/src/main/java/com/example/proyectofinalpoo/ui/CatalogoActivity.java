@@ -57,9 +57,43 @@ public class CatalogoActivity extends AppCompatActivity {
 
             runOnUiThread(() -> {
                 boolean esAdmin = session.esAdmin();
-                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin);
+                adapter = new CatalogoAdapter(productos, categoriasMap, esAdmin,
+                        new CatalogoAdapter.OnProductoActionListener() {
+                            @Override
+                            public void onEdit(Producto producto) {
+                                Intent intent = new Intent(CatalogoActivity.this, RegistroProductoActivity.class);
+                                intent.putExtra("extra_id_producto", producto.id_Producto);
+                                startActivity(intent);
+                            }
+
+                            @Override
+                            public void onDelete(Producto producto) {
+                                new androidx.appcompat.app.AlertDialog.Builder(CatalogoActivity.this)
+                                        .setTitle("Eliminar Producto")
+                                        .setMessage("¿Estás seguro de eliminar el producto " + producto.nombre + "?")
+                                        .setPositiveButton("Sí", (dialog, which) -> {
+                                            AppDatabase.databaseWriteExecutor.execute(() -> {
+                                                db.inventarioDao().eliminarProducto(producto);
+                                                runOnUiThread(() -> {
+                                                    android.widget.Toast.makeText(CatalogoActivity.this,
+                                                            "Producto eliminado", android.widget.Toast.LENGTH_SHORT)
+                                                            .show();
+                                                    cargarDatos();
+                                                });
+                                            });
+                                        })
+                                        .setNegativeButton("No", null)
+                                        .show();
+                            }
+                        });
                 recyclerView.setAdapter(adapter);
             });
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarDatos();
     }
 }
