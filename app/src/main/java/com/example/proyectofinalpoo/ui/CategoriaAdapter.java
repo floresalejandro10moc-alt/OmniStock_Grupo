@@ -15,8 +15,8 @@ import java.util.List;
 
 public class CategoriaAdapter extends RecyclerView.Adapter<CategoriaAdapter.CategoriaViewHolder> {
 
-    private List<Categoria> listaCategorias;
-    private OnCategoriaClickListener listener;
+    protected List<Categoria> listaCategorias;
+    protected OnCategoriaClickListener listener;
 
     // Interfaz para comunicar los clics al Activity
     public interface OnCategoriaClickListener {
