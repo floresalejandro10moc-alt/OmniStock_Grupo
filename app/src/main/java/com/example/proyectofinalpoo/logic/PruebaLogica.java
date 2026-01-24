@@ -18,7 +18,7 @@ public class PruebaLogica {
         lista.add(new Ropa(2, "Camisa Vieja (Test)", 100.00, 5, 0.12, true));
 
         // ID: 3
-        lista.add(new Alimento(3, "Manzanas (Test)", 50.00, 100));
+        lista.add(new Alimento(3, "Manzanas (Test)", 50.00, 100, "2030-01-01"));
 
         return lista;
     }

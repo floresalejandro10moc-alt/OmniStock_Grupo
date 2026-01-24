@@ -25,6 +25,9 @@ public abstract class ProductoBase {
     @ColumnInfo(name = "ivaActual")
     public double ivaActual;
 
+    @ColumnInfo(name = "pro_FechaCaducidad")
+    public String fechaCaducidad;
+
     // CAMPOS NECESARIOS PARA LOS HIJOS (Ropa y Alimento)
     @ColumnInfo(name = "pro_EsTemporadaAnterior")
     public int esTemporadaAnterior;

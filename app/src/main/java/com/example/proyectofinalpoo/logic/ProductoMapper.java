@@ -42,7 +42,8 @@ public class ProductoMapper {
                     entidadProducto.id_Producto, // <--- IMPORTANTE: EL ID
                     entidadProducto.nombre,
                     entidadProducto.precioBase,
-                    entidadProducto.stock);
+                    entidadProducto.stock,
+                    entidadProducto.fechaCaducidad); // Nuevo: pasamos fecha
         }
 
         // CASO 4: DEFECTO
